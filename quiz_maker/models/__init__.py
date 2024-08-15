@@ -1,7 +1,4 @@
-# init_db.py
-from app import create_app, db
-
-app = create_app()
-
-with app.app_context():
-    db.create_all()
+from .user import User
+from .quiz import Quiz
+from .question import Question
+from .answer import Answer

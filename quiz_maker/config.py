@@ -4,6 +4,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = f"mysql://{os.getenv('MYSQL_USER')}:{os.getenv('MYSQL_PWD')}@{os.getenv('MYSQL_HOST')}/{os.getenv('MYSQL_DB')}"
+    SECRET_KEY = os.getenv('SECRET_KEY', 'defaultsecret')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SECRET_KEY = os.getenv('SECRET_KEY')
+
+class DevelopmentConfig(Config):
+    SQLALCHEMY_DATABASE_URI = (
+        f"mysql://{os.getenv('PROD_MYSQL_USER')}:{os.getenv('PROD_MYSQL_PWD')}@"
+        f"{os.getenv('PROD_MYSQL_HOST')}/{os.getenv('PROD_MYSQL_DB')}"
+    )
+
+class TestingConfig(Config):
+    SQLALCHEMY_DATABASE_URI = (
+        f"mysql://{os.getenv('TEST_MYSQL_USER')}:{os.getenv('TEST_MYSQL_PWD')}@"
+        f"{os.getenv('TEST_MYSQL_HOST')}/{os.getenv('TEST_MYSQL_DB')}"
+    )

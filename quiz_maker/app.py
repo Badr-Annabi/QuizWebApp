@@ -1,32 +1,34 @@
 from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from models.user import User
-from models.quiz import Quiz
-from models.question import Question
-from models.answer import Answer
-from config import Config
+from config import DevelopmentConfig, TestingConfig
+from db import db
 import os
 
 
-app = Flask(__name__)
-app.config.from_object(Config)
-db = SQLAlchemy(app)
-
-env = os.getenv('ENV', 'prod')
-db_user = os.getenv(f"{env.upper()}_MYSQL_USER")
-db_pwd = os.getenv(f"{env.upper()}_MYSQL_PWD")
-db_host = os.getenv(f"{env.upper()}_MYSQL_HOST")
-db_name = os.getenv(f"{env.upper()}_MYSQL_DB")
-
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] =  f'mysql://{db_user}:{db_pwd}@{db_host}/{db_name}'
+
+    env = os.getenv('ENV', 'PROD')
+    if env == 'test':
+        app.config.from_object(TestingConfig)
+    else:
+        app.config.from_object(DevelopmentConfig)
+
     db.init_app(app)
+
+    with app.app_context():
+        from models import user, quiz, question, answer
+        db.create_all()
 
     return app
 
+app = create_app()
+
 @app.route('/quizzes', methods=['POST'])
 def create_quiz():
+    from models.user import User
+    from models.quiz import Quiz
+    from models.question import Question
+
     data = request.get_json()
     creator_id = data.get('creator_id')
     title = data.get('title')
@@ -47,6 +49,10 @@ def create_quiz():
 
 @app.route('/answers', methods=['POST'])
 def submit_answer():
+    from models.user import User
+    from models.question import Question
+    from models.answer import Answer
+
     data = request.get_json()
     student_id = data.get('student_id')
     question_id = data.get('question_id')
