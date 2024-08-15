@@ -7,13 +7,20 @@ from models.answer import Answer
 from config import Config
 import os
 
+
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 
+env = os.getenv('ENV', 'prod')
+db_user = os.getenv(f"{env.upper()}_MYSQL_USER")
+db_pwd = os.getenv(f"{env.upper()}_MYSQL_PWD")
+db_host = os.getenv(f"{env.upper()}_MYSQL_HOST")
+db_name = os.getenv(f"{env.upper()}_MYSQL_DB")
+
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'mysql+pymysql:///test.db')
+    app.config['SQLALCHEMY_DATABASE_URI'] =  f'mysql://{db_user}:{db_pwd}@{db_host}/{db_name}'
     db.init_app(app)
 
     return app
