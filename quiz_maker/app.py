@@ -16,7 +16,7 @@ def create_app():
         app.config.from_object(DevelopmentConfig)
 
     db.init_app(app)
-    app.secret_key = os.getenv('SECRET_KEY', 'defaultsecret')
+    app.secret_key = os.getenv('SECRET_KEY')
 
     with app.app_context():
         from models import user, quiz, question, answer
@@ -60,6 +60,8 @@ def login():
         return jsonify({'error': 'Invalid credentials'}), 401
 
     session['user_id'] = user.id
+    print(f"User ID set in session: {session.get('user_id')}")
+    # print(user.id)
     return jsonify({'message': 'Login successful'}), 200
 
 @app.route('/logout', methods=['POST'])
@@ -74,6 +76,7 @@ def create_quiz():
     from models.question import Question
 
     if 'user_id' not in session:
+        print(f"Session data: {session}")
         return jsonify({'error': 'Unauthorized'}), 401
 
     data = request.get_json()
@@ -85,7 +88,7 @@ def create_quiz():
     if not creator:
         return jsonify({'error': 'Creator not found'}), 404
 
-    new_quiz = Quiz(title=title, creator=creator)
+    new_quiz = Quiz(title=title, creator_id=creator_id)
     for q_data in questions_data:
         question = Question(text=q_data['text'])
         new_quiz.questions.append(question)
@@ -114,11 +117,17 @@ def submit_answer():
     if not student or not question:
         return jsonify({'error': 'User or Question not found'}), 404
 
-    answer = Answer(text=text, is_correct=is_correct, question=question, student=student)
+    answer = Answer(text=text, is_correct=is_correct, question_id=question_id, student_id=student_id)
     db.session.add(answer)
     db.session.commit()
 
     return jsonify(answer.to_dict()), 201
+@app.route('/debug-session')
+def debug_session():
+    return jsonify({
+        'session_data': dict(session)
+    })
+
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=True)
