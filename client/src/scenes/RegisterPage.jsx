@@ -1,168 +1,130 @@
-import React, { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { GoogleLogin } from '@react-oauth/google'
-// import { jwtDecode } from 'jwt-decode'
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
+const RegisterPage = () => {
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+    });
 
-const InstructorRegisterPage = () => {
-    const responseMessage = (credentialResponse) => {
-        // const credentialResponseDecoded = jwtDecode(credentialResponse.credential);
-        // console.log(credentialResponseDecoded);
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
     };
 
-    const errorMessage = (error) => {
-        console.log(error);
-    };
-    const [name, setName] = useState('');
-    const [familyName, setFamilyName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [nameError, setNameError] = useState('');
-    const [emailError, setEmailError] = useState('');
-    const [passwordError, setPasworError] = useState('');
-    const navigate = useNavigate();
-
-
-//   function validatPassword(pwd) {
-//     const lowerCase = /[a-z]/;
-//     const upperCase = /[A-Z]/;
-//     const number = /[0-9]/;
-//     const symbol = /[!@#$%^&*]/;
-//     const valid = 0;
-
-//     if (pwd.length < 8) {
-//         $('.err-pwd').text('Use 8 characters or more for your password');
-//     } else if (!lowerCase.test(pwd)) {
-//         $('.err-pwd').text('Password should at least have one lowercase letter');
-//     } else if (!upperCase.test(pwd)) {
-//         $('.err-pwd').text('Password should at least have one uppercase letter');
-//     } else if (!number.test(pwd)) {
-//         $('.err-pwd').text('Password should at least have one number');
-//     } else if (!symbol.test(pwd)) {
-//         $('.err-pwd').text('Password should at least have one symbol');
-//     } else {
-//         valid = 1;
-//     }
-// }
-
-    const RegisterUser = async (name, familyName, email, password) => {
-        try {
-            const response = await fetch('http://0.0.0.0:5003/instructor/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({"first_name": name,
-                    "last_name": familyName,
-                    "email": email,
-                    "password": password
-                }),
-            });
-            if (response.ok) {
-                const result = await response.json();
-                console.log(result)
-            } else {
-                // Handle network error
-                console.error('Network error');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
+    const toggleConfirmPasswordVisibility = () => {
+        setShowConfirmPassword(!showConfirmPassword);
     };
 
-    const onButtonClick = (e) => {
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = (e) => {
         e.preventDefault();
-        if (email && password) {
-            RegisterUser(name, familyName, email, password);
-            //   setRedirect(true);
-            navigate("/login")
-        } else {
-            setNameError('Full Name is required')
-            setEmailError('Email is required')
-            setPasworError('Password is required')
+        if (formData.password !== formData.confirmPassword) {
+            alert('Passwords do not match!');
+            return;
         }
+        console.log('Registration submitted:', formData);
+    };
 
-    }
     return (
-        <div className='flex'>
-            <div className='bg-indigo-600 w-1/2 flex justify-center items-center'>
-                <p className='gothic text-4xl text-center text-white'>You're one step close to be part of our instructors community</p>
-            </div>
-            <div className='w-1/2 flex flex-col items-center justify-center h-screen'>
-                <div className='bg-red-300 '>
-                    <div className='gothic text-2xl'>Register Here</div>
-                </div>
-                <br />
-                <div className='my-4'>
-                    <GoogleLogin onSuccess={responseMessage}  onError={errorMessage} />
-                </div>
-                <br/>
-                <div className='flex gap-4 mb-8'>
-                    <div className='flex flex-col'>
+        <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md">
+                <h2 className="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-gray-200">Register</h2>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div>
+                        <label className="block text-gray-700 dark:text-gray-300 mb-2">First Name</label>
                         <input
-                            value={name}
-                            placeholder='Name'
-                            onChange={(e) => setName(e.target.value)}
-                            className='inputBox'
+                            type="text"
+                            name="firstName"
+                            value={formData.firstName}
+                            onChange={handleChange}
+                            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
                         />
-                        <label className='errorLabel'>{nameError}</label>
                     </div>
-                    <br />
-                    <div className='flex flex-col'>
+                    <div>
+                        <label className="block text-gray-700 dark:text-gray-300 mb-2">Last Name</label>
                         <input
-                            value={familyName}
-                            placeholder='Family Name'
-                            onChange={(e) => setFamilyName(e.target.value)}
-                            className='inputBox'
+                            type="text"
+                            name="lastName"
+                            value={formData.lastName}
+                            onChange={handleChange}
+                            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
                         />
-                        <label className='errorLabel'>{nameError}</label>
                     </div>
-                </div>
-                <div className='flex flex-col mb-8'>
-                    <input
-                        value={email}
-                        placeholder='Enter your email'
-                        onChange={(e) => setEmail(e.target.value)}
-                        className='inputBox'
-                    />
-                    <label className='errorLabel'>{emailError}</label>
-                </div>
-                <br />
-                <div className='flex flex-col '>
-                    <input
-                        type='password'
-                        value={password}
-                        placeholder='Enter your password'
-                        onChange={(e) => setPassword(e.target.value)}
-                        className='inputBox'
-                    />
-                    <label className='errorLabel'>{passwordError}</label>
-                    <input
-                        type='password'
-                        value={confirmPassword}
-                        placeholder='Confirm your password'
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        className='inputBox mt-4'
-                    />
-                    <label className='errorLabel'>{passwordError}</label>
-                </div>
-                <br />
-                <div>
-                    <input className="bg-indigo-600" type="button" onClick={onButtonClick} value={'Register'} />
-                </div>
-                <div className='flex gap-2 text-sm'>
-                    <p className='text-gray-400'>already had an account?</p>
-                    <Link to="/login">
-            <span className='text-indigo-600 hover:underline cursor-pointer'>
-              Login
-            </span>
+                    <div>
+                        <label className="block text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                        />
+                    </div>
+                    <div className="relative">
+                        <label className="block text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                        />
+                        <button
+                            type="button"
+                            onClick={togglePasswordVisibility}
+                            className="absolute top-12 right-3 flex items-center text-gray-500"
+                        >
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+                    </div>
+                    <div className="relative">
+                        <label className="block text-gray-700 dark:text-gray-300 mb-2">Confirm Password</label>
+                        <input
+                            type={showConfirmPassword ? "text" : "password"}
+                            name="confirmPassword"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                        />
+                        <button
+                            type="button"
+                            onClick={toggleConfirmPasswordVisibility}
+                            className="absolute top-12 right-3 flex items-center text-gray-500"
+                        >
+                            {showConfirmPassword ? <FaEyeSlash/> : <FaEye/>}
+                        </button>
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="w-full py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg shadow-lg hover:bg-blue-700 transition-all"
+                    >
+                        Register
+                    </button>
+                </form>
+                <p className="text-center text-gray-600 dark:text-gray-400 mt-4">
+                    Already have an account?{' '}
+                    <Link to="/login" className="text-blue-500 hover:underline">
+                        Login
                     </Link>
-                </div>
+                </p>
             </div>
         </div>
+    );
+};
 
-    )
-}
-
-export default InstructorRegisterPage;
+export default RegisterPage;

@@ -4,7 +4,8 @@ import test_img from "../images/test_img.png";
 
 const AllQuizes = () => {
     return (
-        <div className="flex flex-col items-center min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div id="Allquizes"
+            className="flex flex-col items-center min-h-screen bg-gray-100 dark:bg-gray-900">
             <p className='gothic flex flex-col lg:flex-row justify-center text-3xl py-6 dark:text-gray-200'>
                 Available Quizzes
             </p>
