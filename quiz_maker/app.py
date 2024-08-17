@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
-from flask import Flask, request, jsonify, session
+from uuid import uuid4
+
+from flask import Flask, request, jsonify, session, abort
 # from werkzeug.security import generate_password_hash, check_password_hash
 from config import DevelopmentConfig, TestingConfig
-from db import db
+from db import db, sessions
+from flask_cors import CORS
 import os
 from models.encrypte import verify_password, hash_password
 
@@ -26,6 +29,23 @@ def create_app():
 
 app = create_app()
 
+CORS(app, supports_credentials=True, resources={r"*": {"origins": "*"}})
+
+
+@app.route("/@me")
+def check_session():
+    from models.user import User
+    session_id = session.get("session_id")
+    if not session_id:
+        abort(403)
+    user_id = sessions.get(session_id)
+    if not user_id:
+        abort(403)
+    if not User.query.filter_by(id=user_id).first():
+        abort(403)
+    print("session found")
+    return jsonify({"message": "user logged"})
+
 @app.route('/signup', methods=['POST'])
 def signup():
     from models.user import User
@@ -46,6 +66,11 @@ def signup():
 
     return jsonify(new_user.to_dict()), 201
 
+def _get_uid():
+    """This function generates a uuid"""
+    return str(uuid4())
+
+
 @app.route('/login', methods=['POST'])
 def login():
     from models.user import User
@@ -55,13 +80,12 @@ def login():
     password = data.get('password')
 
     user = User.query.filter_by(email=email).first()
-    # if not user or not check_password_hash(user.password, password):
     if not user or not user.check_password(password):
         return jsonify({'error': 'Invalid credentials'}), 401
-
-    session['user_id'] = user.id
-    print(f"User ID set in session: {session.get('user_id')}")
-    # print(user.id)
+    session_id = _get_uid()
+    sessions.set(session_id, user.id)
+    session['session_id'] = session_id
+    print(f"User ID set in session: {session.get('session_id')}")
     return jsonify({'message': 'Login successful'}), 200
 
 @app.route('/logout', methods=['POST'])
