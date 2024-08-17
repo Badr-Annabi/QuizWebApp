@@ -53,9 +53,9 @@ def signup():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
-    first_name = data.get('first_name')
-    last_name = data.get('last_name')
-
+    first_name = data.get('firstName')
+    last_name = data.get('lastName')
+    print(f"User's infos {first_name} {last_name} {email} {password}")
     if User.query.filter_by(email=email).first():
         return jsonify({'error': 'User already exists'}), 400
 

@@ -12,6 +12,7 @@ const RegisterPage = () => {
         password: '',
         confirmPassword: '',
     });
+    const [error, setError] = useState('');
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -22,16 +23,35 @@ const RegisterPage = () => {
     };
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Check if passwords match
         if (formData.password !== formData.confirmPassword) {
-            alert('Passwords do not match!');
+            setError('Passwords do not match');
             return;
         }
-        console.log('Registration submitted:', formData);
+        const { confirmPassword, ...dataToSubmit } = formData;
+
+        try {
+            console.log(dataToSubmit);
+            const data = await fetch("http://127.0.0.1:5000/signup", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataToSubmit)
+            });
+            console.log('Register Data:', data);
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
 
     return (
@@ -108,6 +128,8 @@ const RegisterPage = () => {
                             {showConfirmPassword ? <FaEyeSlash/> : <FaEye/>}
                         </button>
                     </div>
+
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
 
                     <button
                         type="submit"
