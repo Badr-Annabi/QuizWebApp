@@ -17,9 +17,29 @@ const LoginPage = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Login submitted:', formData);
+
+        try {
+            const response = await fetch('http://127.0.0.1:5000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+                credentials: 'include'
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                console.log('Login successful:', result);
+            } else {
+                console.error('Login failed:', result.error);
+            }
+        } catch (error) {
+            console.error('An error occurred during login:', error);
+        }
     };
 
     return (

@@ -67,7 +67,7 @@ def signup():
     return jsonify(new_user.to_dict()), 201
 
 def _get_uid():
-    """This function generates a uuid"""
+    """This function generates an uuid"""
     return str(uuid4())
 
 
@@ -83,7 +83,8 @@ def login():
     if not user or not user.check_password(password):
         return jsonify({'error': 'Invalid credentials'}), 401
     session_id = _get_uid()
-    sessions.set(session_id, user.id)
+    print("{}: {} ".format(session_id, user.id))
+    sessions.set(session_id, str(user.id))
     session['session_id'] = session_id
     print(f"User ID set in session: {session.get('session_id')}")
     return jsonify({'message': 'Login successful'}), 200
