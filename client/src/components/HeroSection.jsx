@@ -14,7 +14,7 @@ const HeroSection = () => {
     }
 
     const handleClick = () => {
-        navigate('/createquizz');
+        navigate('/createquiz');
     }
 
     return (

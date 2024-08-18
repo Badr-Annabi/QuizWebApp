@@ -15,17 +15,21 @@ root.render(
   <React.StrictMode>
     <Router>
         <Routes>
-            <Route path="/" element={<HomePage/>} />
+            <Route path="/" element={
+                <PrivateRoute>
+                    <HomePage/>
+                </PrivateRoute>
+            }/>
             <Route path="/login" element={<LoginPage/>} />
             <Route path="/register" element={<RegisterPage/>} />
             <Route path="/about" element={<About/>} />
             <Route path="/Quizz" element={
-                <PrivateRoute>
+                <PrivateRoute accessible={false}>
                     <QuizPage/>
                 </PrivateRoute>
-                }/>
-            <Route path="/createquizz" element={
-                <PrivateRoute>
+            }/>
+            <Route path="/createquiz" element={
+                <PrivateRoute accessible={false}>
                     <NewQuizz/>
                 </PrivateRoute>
                 }/>

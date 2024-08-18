@@ -41,10 +41,11 @@ def check_session():
     user_id = sessions.get(session_id)
     if not user_id:
         abort(403)
-    if not User.query.filter_by(id=user_id).first():
+    user = User.query.filter_by(id=user_id).first()
+    if not user :
         abort(403)
     print("session found")
-    return jsonify({"message": "user logged"})
+    return jsonify({"user": user.to_dict()})
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -91,8 +92,13 @@ def login():
 
 @app.route('/logout', methods=['POST'])
 def logout():
-    session.pop('user_id', None)
-    return jsonify({'message': 'Logout successful'}), 200
+    session_id = session.get('session_id')
+    if session_id:
+        sessions.delete_session(session_id)
+        session.pop('session_id', None)
+        return jsonify({'message': 'Logout successful'}), 200
+    else:
+        return jsonify({'message': 'No active session'}), 400
 
 @app.route('/quizzes', methods=['POST'])
 def create_quiz():

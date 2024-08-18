@@ -9,6 +9,7 @@ class RedisDB:
             port=6379,         # Default Redis port
             db=0               # Redis database index (default is 0)
         )
+        # self.__engine.flushdb()
 
     def get(self, key: str):
         return self.__engine.get(key).decode('utf-8')
@@ -17,7 +18,7 @@ class RedisDB:
         self.__engine.set(key, value)
 
     def delete_session(self, key):
-        self.__engine.delete([key])
+        self.__engine.delete(key)
 
     def get_all(self):
         return [key.decode('utf-8') for key in self.__engine.keys()]

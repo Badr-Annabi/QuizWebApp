@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const LoginPage = () => {
@@ -8,6 +8,9 @@ const LoginPage = () => {
         email: '',
         password: '',
     });
+
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -34,6 +37,9 @@ const LoginPage = () => {
 
             if (response.ok) {
                 console.log('Login successful:', result);
+                // Redirect to the page the user was trying to access
+                const from = location.state?.from?.pathname || '/';
+                navigate(from, { replace: true });
             } else {
                 console.error('Login failed:', result.error);
             }
