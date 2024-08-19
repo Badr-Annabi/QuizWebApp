@@ -6,6 +6,9 @@ const NewQuizz = () => {
     const [questions, setQuestions] = useState([
         { question: '', answers: [''], correctAnswer: '' }
     ]);
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [level, setLevel] = useState('easy'); // Default level is '1'
 
     const handleQuestionChange = (index, value) => {
         const newQuestions = [...questions];
@@ -46,9 +49,40 @@ const NewQuizz = () => {
         setQuestions(newQuestions);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Quiz submitted:', questions);
+
+        const quizData = {
+            title,
+            description,
+            level,
+            questions,
+        };
+
+        try {
+            const response = await fetch('http://127.0.0.1:5000/quizzes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(quizData),
+            });
+
+            if (response.ok) {
+                console.log('Quiz submitted successfully');
+            } else {
+                console.error('Failed to submit quiz');
+            }
+        } catch (error) {
+            console.error('Error submitting quiz:', error);
+        }
+    };
+
+    const levelColors = {
+        easy: 'bg-green-500 text-white',
+        medium: 'bg-yellow-500 text-black',
+        hard: 'bg-red-500 text-white',
     };
 
     return (
@@ -67,6 +101,48 @@ const NewQuizz = () => {
                         <PlusIcon className="w-10 h-10 inline-block mr-2"/> Create a New Quiz
                     </h1>
                     <form onSubmit={handleSubmit} className="space-y-6">
+
+                        <div>
+                            <label htmlFor="title" className="block text-lg font-medium">Quiz Title</label>
+                            <input
+                                type="text"
+                                id="title"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                className="text-gray-900 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Enter quiz title"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label htmlFor="description" className="block text-lg font-medium">Description</label>
+                            <textarea
+                                id="description"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                className="text-gray-900 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Enter quiz description"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-lg font-medium">Difficulty Level</label>
+                            <div className="flex space-x-4 mt-2">
+                                {["easy", "medium", "hard"].map((lvl) => (
+                                    <button
+                                        key={lvl}
+                                        type="button"
+                                        onClick={() => setLevel(lvl)}
+                                        className={`${level === lvl ? levelColors[lvl] : 'bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200'} p-2 rounded-lg focus:outline-none`}
+                                    >
+                                        {lvl}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
                         {questions.map((q, qIndex) => (
                             <div key={qIndex} className="mb-6">
                                 <div className="flex justify-between items-center mb-2">
@@ -136,19 +212,18 @@ const NewQuizz = () => {
                                 </div>
                             </div>
                         ))}
-                        <div className="flex justify-end mt-10">
-                            <button
-                                type="submit"
-                                className="bg-gradient-to-r from-blue-700 to-indigo-600 text-white py-3 px-8 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
-                            >
-                                Submit Quiz
-                            </button>
-                        </div>
+
+                        <button
+                            type="submit"
+                            className="w-full text-center py-3 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-all"
+                        >
+                            Submit Quiz
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
     );
-};
+}
 
 export default NewQuizz;
