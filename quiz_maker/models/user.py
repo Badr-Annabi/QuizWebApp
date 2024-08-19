@@ -10,15 +10,18 @@ class User(db.Model):
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80), nullable=False)
 
-    def __init__(self, email, password, first_name, last_name):
-        self.email = email
-        # self.password = generate_password_hash(password, method='sha256')
-        self.password = hash_password(password)
-        self.first_name = first_name
-        self.last_name = last_name
+
+    def __init__(self, *args, **kwargs):
+        """ initializes user """
+        super().__init__(*args, **kwargs)
+
+    def __setattr__(self, name, value):
+        """sets a password with md5 encryption"""
+        if name == "password":
+            value = hash_password(value)
+        super().__setattr__(name, value)
 
     def check_password(self, password):
-        # return check_password_hash(self.password, password)
         return verify_password(password, self.password)
 
     def to_dict(self):
