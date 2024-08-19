@@ -1,10 +1,11 @@
 # from werkzeug.security import generate_password_hash, check_password_hash
 from db import db
 from .encrypte import hash_password, verify_password
+from .base import BaseModel
 
-class User(db.Model):
+
+class User(BaseModel):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     first_name = db.Column(db.String(80), nullable=False)
@@ -19,7 +20,7 @@ class User(db.Model):
         """sets a password with md5 encryption"""
         if name == "password":
             value = hash_password(value)
-        super().__setattr__(name, value)
+            super().__setattr__(name, value)
 
     def check_password(self, password):
         return verify_password(password, self.password)
@@ -31,3 +32,4 @@ class User(db.Model):
             'first_name': self.first_name,
             'last_name': self.last_name
         }
+

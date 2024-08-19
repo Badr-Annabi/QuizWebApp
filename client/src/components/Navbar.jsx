@@ -45,7 +45,7 @@ const Navbar = () => {
                     <div className="flex-shrink-0">
                         <Link to="/" className="text-xl font-bold text-gray-900 dark:text-gray-100">Home</Link>
                     </div>
-                    <div className="hidden md:flex md:space-x-10 text-lg">
+                    <div className="hidden md:flex md:items-center md:space-x-10 text-lg">
                         <Link to="/quizz" className="hover:text-blue-600 dark:hover:text-blue-400">Start Now</Link>
                         <Link to="/createquiz" className="hover:text-blue-600 dark:hover:text-blue-400">Build Quiz</Link>
                         <Link to="/about" className="hover:text-blue-600 dark:hover:text-blue-400">About</Link>
@@ -83,13 +83,13 @@ const Navbar = () => {
                             <>
                                 <Link
                                     to="/login"
-                                    className="border-gray-900 dark:border-white border-2 rounded-md hover:rounded-xl hover:bg-amber-50 transition-all duration-300 ease-in-out p-4 ml-auto"
+                                    className="border-gray-900 dark:border-white border-2 rounded-md hover:rounded-xl hover:bg-amber-50 transition-all duration-300 ease-in-out p-2 ml-auto"
                                 >
                                     Login
                                 </Link>
                                 <Link
                                     to="/register"
-                                    className="border-gray-900 dark:border-white border-2 rounded-md hover:rounded-xl hover:bg-amber-50 transition-all duration-300 ease-in-out p-4"
+                                    className="border-gray-900 dark:border-white border-2 rounded-md hover:rounded-xl hover:bg-amber-50 transition-all duration-300 ease-in-out p-2"
                                 >
                                     Sign Up
                                 </Link>

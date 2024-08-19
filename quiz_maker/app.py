@@ -105,24 +105,41 @@ def create_quiz():
     from models.user import User
     from models.quiz import Quiz
     from models.question import Question
-
-    if 'user_id' not in session:
-        print(f"Session data: {session}")
+    from models.answer import Answer
+    session_id = session.get('session_id')
+    print(f"session_id: {session_id}")
+    if not session_id:
+        abort(403)
+    creator_id = sessions.get(session_id)
+    if not creator_id:
         return jsonify({'error': 'Unauthorized'}), 401
 
     data = request.get_json()
-    creator_id = data.get('creator_id')
-    title = data.get('title')
-    questions_data = data.get('questions', [])
-
+    print(f"data:{data}")
     creator = User.query.get(creator_id)
+    print(f"creator: {creator}")
+    title = data.get('title')
+    description = data.get('description')
+    level = data.get('level')
+    questions_data = data.get('questions', [])
     if not creator:
         return jsonify({'error': 'Creator not found'}), 404
-
-    new_quiz = Quiz(title=title, creator_id=creator_id)
+    print(title, description, level, creator_id)
+    new_quiz = Quiz(title=title, description = description,  level = level, creator_id=creator_id)
     for q_data in questions_data:
-        question = Question(text=q_data['text'])
+        question = Question(text=q_data['question'])
         new_quiz.questions.append(question)
+        answers_data = q_data['answers']
+        correct_answer = q_data['correctAnswer']
+        for a_data in answers_data:
+            if a_data == correct_answer:
+                answer = Answer(text=a_data, is_correct=True, question_id=question.id)
+                question.answers.append(answer)
+            else:
+                answer = Answer(text=a_data, is_correct=False, question_id=question.id)
+                question.answers.append(answer)
+
+
     db.session.add(new_quiz)
     db.session.commit()
 
