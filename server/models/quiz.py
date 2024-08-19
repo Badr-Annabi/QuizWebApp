@@ -1,17 +1,12 @@
-from models.basemodel import Base, BaseModel
-from sqlalchemy import Column, String, ForeignKey
-from sqlalchemy.orm import relationship
+from models.base import BaseModel
+from db import db
 
-class Quiz(Base, BaseModel):
-    """ Quiz Class definition """
+
+class Quiz(BaseModel):
     __tablename__ = 'quizzes'
-    
-    theme = Column(String(128), nullable=True)
-    title = Column(String(128), nullable=False)
-    creator_id = Column(String(60), ForeignKey('teachers.id'), nullable=False)
-    creator = relationship('Teacher', back_populates='quizzes')
-    questions = relationship('Question', back_populates='quiz', cascade='all, delete-orphan')
-
-    def __init__(self, *args, **kwargs):
-        """ initializes quiz """
-        super().__init__(*args, **kwargs)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(255))
+    level = db.Column(db.String(10), nullable=False)
+    creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    # creator = db.relationship('User', backref='quizzes')
+    questions = db.relationship('Question', backref='quiz', lazy=True)

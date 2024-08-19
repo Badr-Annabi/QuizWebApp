@@ -1,3 +1,0 @@
-CREATE DATABASE IF NOT EXISTS test_db_quiz;
-GRANT ALL PRIVILEGES ON test_db_quiz.* TO 'oum'@'localhost';
-FLUSH PRIVILEGES;
