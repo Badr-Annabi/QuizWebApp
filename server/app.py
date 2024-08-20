@@ -8,6 +8,9 @@ from redis_cashing import db, sessions
 from flask_cors import CORS
 import os
 from models.encrypte import verify_password, hash_password
+from models.user import User, UserQuiz
+from models.quiz import Quiz
+from models.question import Question
 
 def create_app():
     app = Flask(__name__)
@@ -223,34 +226,43 @@ def get_quiz(quiz_id):
     return jsonify(quiz_dict)
 
 
-@app.route('/quizzes/<quiz_id>/take', methods=['POST'])
-def take_quiz(quiz_id):
+@app.route('/quizzes/<quiz_id>/submit', methods=['POST'])
+def submit_quiz(quiz_id):
     from models.quiz import Quiz
-
+    from models.question import Question
+    
     data = request.get_json()
     user_id = data.get('user_id')
-    user_answers = data.get('answers')
+    answers = data.get('answers')
 
-    quiz = Quiz.query.get(quiz_id)
-    correct_answers = {q.id: q.correct_answer for q in quiz.questions}
+    total_score = 0
 
-    raw_score = 0
-    total_questions = len(correct_answers)
+    for answer in answers:
+        question_id = answer.get('question_id')
+        user_answer = answer.get('answer')
+        
+        question = Question.get(question_id)
+        correct_answer = question.get_correct_answer()
+        
+        if user_answer == correct_answer:
+            total_score += 1
 
-    for question_id, user_answer in user_answers.items():
-        if user_answer == correct_answers[int(question_id)]:
-            raw_score += 1
+    user_quiz = UserQuiz.query.filter_by(user_id=user_id, quiz_id=quiz_id).first()
 
-    user_quiz = UserQuiz(
-        user_id=user_id,
-        quiz_id=quiz_id,
-        raw_score=raw_score
-    )
-
+    if user_quiz:
+        user_quiz.raw_score = total_score
+    else:
+        user_quiz = UserQuiz(
+            user_id=user_id,
+            quiz_id=quiz_id,
+            raw_score=total_score
+        )
+    
     db.session.add(user_quiz)
     db.session.commit()
 
     return jsonify(user_quiz.to_dict()), 201
+
 
 @app.route('/users/<quiz_id>/result', methods=['GET'])
 def get_user_result(quiz_id):
@@ -260,17 +272,17 @@ def get_user_result(quiz_id):
     if not user_id:
         return jsonify({"error": "User not authenticated"}), 403
 
-    result = UserQuiz.query.filter_by(user_id=user_id, quiz_id=quiz_id).first().get(raw_score)
+    user_quiz = UserQuiz.query.filter_by(user_id=user_id, quiz_id=quiz_id).first()
 
-    quiz = Quiz.query.get(quiz_id)
+    score = user_quiz.get('raw_score')
+    date_taken = user_quiz.get('date_taken')
     result_data = {
-    "quiz_title": quiz.title,
-    "raw_score": user_quiz.raw_score,
-    "total_questions": len(quiz.questions),
+    "quiz_title": user_quiz.title,
+    "raw_score": score,
+    "total_questions": len(user_quiz.questions),
     "date_taken": user_quiz.date_taken
     }
-    results.append(result_data)
-    return jsonify(result), 200
+    return jsonify(result_data), 200
 
 @app.route('/debug-session')
 def debug_session():

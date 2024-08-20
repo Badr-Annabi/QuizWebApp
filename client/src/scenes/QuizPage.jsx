@@ -61,7 +61,7 @@ const QuizPage = () => {
                         'Content-Type': 'application/json'
                     },
                     credentials: 'include',
-                    body: JSON.stringify({ answers: userAnswers })
+                    body: JSON.stringify({ answer: userAnswers })
                 });
 
                 if (response.ok) {
