@@ -12,3 +12,17 @@ class Quiz(BaseModel):
     questions = db.relationship('Question', backref='quiz', lazy=True)
 
     taken_by_users = db.relationship('UserQuiz', backref='quiz', lazy=True)
+
+    def all_correct_answers(self):
+        """ return a list of all correct answers"""
+
+        for question in self.questions:
+            all_correct_answers = {}
+            for answer in question.answers:
+                if answer.is_correct:
+                    all_correct_answers[question] = answer
+
+        return all_correct_answers
+
+
+
