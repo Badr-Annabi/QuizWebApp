@@ -4,7 +4,7 @@ from uuid import uuid4
 from flask import Flask, request, jsonify, session, abort
 # from werkzeug.security import generate_password_hash, check_password_hash
 from config import DevelopmentConfig, TestingConfig
-from db import db, sessions
+from redis_cashing import db, sessions
 from flask_cors import CORS
 import os
 from models.encrypte import verify_password, hash_password
@@ -121,6 +121,7 @@ def create_quiz():
     from models.quiz import Quiz
     from models.question import Question
     from models.answer import Answer
+
     session_id = session.get('session_id')
     print(f"session_id: {session_id}")
     if not session_id:
@@ -187,11 +188,51 @@ def submit_answer():
     return jsonify(answer.to_dict()), 201
 
 @app.route('/quizzes', methods=['GET'])
-def all_quizes():
+def all_quizzes():
     from models.quiz import Quiz
+
     data = Quiz.query.all()
     quizzes = [quiz.to_dict() for quiz in data]
     return jsonify(quizzes), 200
+
+
+@app.route('/quizzes/<int:quiz_id>', methods=['GET'])
+def get_quiz(quiz_id):
+    from models.quiz import Quiz
+
+    quiz = Quiz.query.get_or_404(quiz_id)
+    return jsonify(quiz.to_dict())
+
+
+@app.route('/quizzes/<quiz_id>/take', methods=['POST'])
+def take_quiz(quiz_id):
+    from models.quiz import Quiz
+
+    data = request.get_json()
+    user_id = data.get('user_id')
+    user_answers = data.get('answers')
+
+    quiz = Quiz.query.get_or_404(quiz_id)
+    correct_answers = {q.id: q.correct_answer for q in quiz.questions}
+
+    raw_score = 0
+    total_questions = len(correct_answers)
+
+    for question_id, user_answer in user_answers.items():
+        if user_answer == correct_answers[int(question_id)]:
+            raw_score += 1
+
+    user_quiz = UserQuiz(
+        user_id=user_id,
+        quiz_id=quiz_id,
+        raw_score=raw_score
+    )
+
+    db.session.add(user_quiz)
+    db.session.commit()
+
+    return jsonify(user_quiz.to_dict()), 201
+
 
 
 @app.route('/debug-session')
