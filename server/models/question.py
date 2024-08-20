@@ -1,5 +1,5 @@
 from models.base import BaseModel
-from db import db
+from redis_cashing import db
 
 class Question(BaseModel):
     __tablename__ = 'questions'

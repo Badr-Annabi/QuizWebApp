@@ -1,5 +1,5 @@
 # from werkzeug.security import generate_password_hash, check_password_hash
-from db import db
+from redis_cashing import db
 from .encrypte import hash_password, verify_password
 from .base import BaseModel
 

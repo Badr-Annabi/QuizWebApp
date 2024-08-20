@@ -4,7 +4,7 @@ from uuid import uuid4
 from flask import Flask, request, jsonify, session, abort
 # from werkzeug.security import generate_password_hash, check_password_hash
 from config import DevelopmentConfig, TestingConfig
-from db import db, sessions
+from redis_cashing import db, sessions
 from flask_cors import CORS
 import os
 from models.encrypte import verify_password, hash_password
@@ -58,7 +58,7 @@ def check_session():
         print(f"No user found with ID: {user_id}")
         abort(403)
 
-    print("Session and user found")
+    # print("Session and user found")
     return jsonify({"user": user.to_dict()})
 
 
@@ -185,6 +185,7 @@ def submit_answer():
     db.session.commit()
 
     return jsonify(answer.to_dict()), 201
+
 @app.route('/debug-session')
 def debug_session():
     return jsonify({
