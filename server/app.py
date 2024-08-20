@@ -252,7 +252,7 @@ def submit_quiz(quiz_id):
         # question_id = answer.get('question_id')
         user_answer = answer.get('selectedOption')
         print(answer)
-        # question = Question.query.get(answer.get('question_id'))
+        # question = Question.query.get( .get('question_id'))
         # print(question)
         # correct_answer = question.get_correct_answer().text
         # if user_answer == correct_answer:

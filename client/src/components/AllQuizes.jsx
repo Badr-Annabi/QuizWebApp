@@ -55,7 +55,7 @@ const AllQuizes = () => {
             <div className='flex flex-col lg:flex-row justify-center'>
                 <div className='grid grid-cols-4 gap-4 p-6'>
                     {quizzes && quizzes.map((quiz, index) => (
-                        <div key={index} className={`rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105 ${getBackgroundColor(quiz.level)}`}>
+                        <div key={index} className={`bg-gray-200 dark:bg-indigo-200 rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105`}>
                             {/* Image Cover */}
                             <img src={test_img} alt="Quiz Cover" className="w-full h-48 object-cover" />
                             <div className='p-4'>
