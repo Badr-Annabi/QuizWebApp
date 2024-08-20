@@ -11,6 +11,10 @@ class User(BaseModel):
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80), nullable=False)
 
+    quizzes_created = db.relationship('Quiz', backref='creator', lazy=True)
+
+    quizzes_taken = db.relationship('UserQuiz', backref='user', lazy=True)
+
 
     def __init__(self, *args, **kwargs):
         """ initializes user """

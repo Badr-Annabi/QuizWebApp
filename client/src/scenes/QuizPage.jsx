@@ -1,9 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/index.css';
 import Header from "../components/Header";
 
 const QuizPage = () => {
+    const { quizId } = useParams();
+    const navigate = useNavigate();
+    const [quiz, setQuiz] = useState(null);
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedOption, setSelectedOption] = useState(null);
+    const [answers, setAnswers] = useState([]);
+
+    useEffect(() => {
+        const fetchQuiz = async () => {
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/quizzes/${quizId}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    const quizData = await response.json();
+                    setQuiz(quizData);
+                } else {
+                    console.error('Failed to fetch quiz');
+                }
+            } catch (error) {
+                console.error('An error occurred while fetching the quiz', error);
+            }
+        };
+
+        fetchQuiz();
+    }, [quizId]);
 
     const handleOptionChange = (option) => {
         setSelectedOption(option);
@@ -11,35 +39,62 @@ const QuizPage = () => {
 
     const handleSubmit = () => {
         if (selectedOption !== null) {
-            alert(`You selected: ${selectedOption}`);
+            setAnswers([...answers, { questionId: quiz.questions[currentQuestionIndex].id, selectedOption }]);
+            setSelectedOption(null);
+            if (currentQuestionIndex < quiz.questions.length - 1) {
+                setCurrentQuestionIndex(currentQuestionIndex + 1);
+            } else {
+                alert('Quiz completed!');
+                navigate('/results');
+            }
         } else {
             alert('Please select an option before submitting.');
         }
     };
+
+    const handlePreviousQuestion = () => {
+        if (currentQuestionIndex > 0) {
+            setCurrentQuestionIndex(currentQuestionIndex - 1);
+            setSelectedOption(answers[currentQuestionIndex - 1]?.selectedOption || null);
+        }
+    };
+
+    if (!quiz) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div>
             <Header />
             <section className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
                 <div className="bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 max-w-3xl w-full mx-4">
-                    <h1 className="text-5xl font-extrabold mb-6 text-center text-gray-500 dark:text-white tracking-tight">Question</h1>
+                    <h1 className="text-5xl font-extrabold mb-6 text-center text-gray-500 dark:text-white tracking-tight">
+                        {quiz.questions[currentQuestionIndex].text}
+                    </h1>
                     <ul className="text-xl text-center mb-8">
-                        {['Option 1', 'Option 2', 'Option 3', 'Option 4'].map((option, index) => (
+                        {quiz.questions[currentQuestionIndex].answers.map((option, index) => (
                             <li key={index} className="my-2">
                                 <button
-                                    onClick={() => handleOptionChange(option)}
+                                    onClick={() => handleOptionChange(option.text)}
                                     className={`py-3 px-6 w-full rounded-lg transition-colors dark:text-blue-400 duration-500 ease-in-out ${
-                                        selectedOption === option
-                                            ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg  dark:text-orange-400"
+                                        selectedOption === option.text
+                                            ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg dark:text-orange-400"
                                             : 'bg-gray-100 dark:bg-gray-700 text-black dark:text-gray-300'
                                     } hover:bg-indigo-600 hover:text-white backdrop-blur-md`}
                                 >
-                                    {option}
+                                    {option.text}
                                 </button>
                             </li>
                         ))}
                     </ul>
-                    <div className="flex justify-center items-center space-x-4">
+                    <div className="flex justify-between items-center space-x-4">
+                        <button
+                            onClick={handlePreviousQuestion}
+                            className="bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 px-8 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+                            disabled={currentQuestionIndex === 0}
+                        >
+                            Previous
+                        </button>
                         <button
                             onClick={handleSubmit}
                             className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-3 px-8 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
@@ -54,4 +109,3 @@ const QuizPage = () => {
 };
 
 export default QuizPage;
-
