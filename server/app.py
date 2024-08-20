@@ -145,6 +145,7 @@ def create_quiz():
         return jsonify({'error': 'Creator not found'}), 404
     print(title, description, level, creator_id)
     new_quiz = Quiz(title=title, description = description,  level = level, creator_id=creator_id)
+
     for q_data in questions_data:
         question = Question(text=q_data['question'])
         new_quiz.questions.append(question)
@@ -161,7 +162,7 @@ def create_quiz():
 
     db.session.add(new_quiz)
     db.session.commit()
-
+    print(new_quiz.to_dict())
     return jsonify(new_quiz.to_dict()), 201
 
 @app.route('/answers', methods=['POST'])
@@ -194,16 +195,22 @@ def submit_answer():
 def all_quizzes():
     from models.quiz import Quiz
 
-    data = Quiz.query.all()
-    quizzes = [quiz.to_dict() for quiz in data]
-    return jsonify(quizzes), 200
+    # data = Quiz.query.all()
+    # quizzes = [quiz.__dict__ for quiz in data]
+    # print(quizzes[0])
+    # quizzes = Quiz.query.join(Question).all()
+    from sqlalchemy.orm import joinedload
+    quizzes_data = Quiz.query.options(joinedload(Quiz.questions)).all()
+    quizzes = [quiz.to_dict() for quiz in quizzes_data]
+    return jsonify(quizzes)
 
 
 @app.route('/quizzes/<quiz_id>', methods=['GET'])
 def get_quiz(quiz_id):
     from models.quiz import Quiz
     from models.question import Question
-
+    
+    # print(quiz_id)
     quiz = db.session.get(Quiz, quiz_id)
     if not quiz:
         return jsonify({'error': 'Quiz not found'}), 404
@@ -229,96 +236,116 @@ def get_quiz(quiz_id):
     return jsonify(quiz_dict)
 
 
-# @app.route('/quizzes/<quiz_id>/submit', methods=['POST'])
-# def submit_quiz(quiz_id):
-#     from models.quiz import Quiz
-#     from models.question import Question
-#
-#     data = request.get_json()
-#     user_id = data.get('user_id')
-#     answers = data.get('answers')
-#
-#     total_score = 0
-#
-#     for answer in answers:
-#         question_id = answer.get('question_id')
-#         user_answer = answer.get('answer')
-#
-#         question = Question.query.get(question_id)
-#         correct_answer = question.get_correct_answer()
-#
-#         if user_answer == correct_answer:
-#             total_score += 1
-#
-#     user_quiz = UserQuiz.query.filter_by(user_id=user_id, quiz_id=quiz_id).first()
-#
-#     if user_quiz:
-#         user_quiz.raw_score = total_score
-#     else:
-#         user_quiz = UserQuiz(
-#             user_id=user_id,
-#             quiz_id=quiz_id,
-#             raw_score=total_score
-#         )
-#
-#     db.session.add(user_quiz)
-#     db.session.commit()
-#
-#     return jsonify(user_quiz.to_dict()), 201
-
 @app.route('/quizzes/<quiz_id>/submit', methods=['POST'])
 def submit_quiz(quiz_id):
     from models.quiz import Quiz
     from models.question import Question
-    from models.user import UserQuiz
 
     data = request.get_json()
-    user_id = session.get('user_id')  # Fetch user ID from session or another source
+    user_id = data.get('user_id')
+    print(user_id)
     answers = data.get('answers')
 
     total_score = 0
 
     for answer in answers:
-        question_id = answer.get('questionId')  # Adjusted to match the frontend key
-        user_answer = answer.get('selectedOption')  # Adjusted to match the frontend key
-
-        question = Question.query.get(question_id)
-        if question:
-            correct_answer = question.get_correct_answer()
-            if user_answer == correct_answer:
-                total_score += 1
-
-    # Fetch the existing user_quiz record if it exists
+        # question_id = answer.get('question_id')
+        user_answer = answer.get('selectedOption')
+        print(answer)
+        # question = Question.query.get(answer.get('question_id'))
+        # print(question)
+        # correct_answer = question.get_correct_answer().text
+        # if user_answer == correct_answer:
+        #     total_score += 1
     user_quiz = UserQuiz.query.filter_by(user_id=user_id, quiz_id=quiz_id).first()
 
     if user_quiz:
-        # Update the existing record
         user_quiz.raw_score = total_score
-    
-        # user_quiz = user_quiz_record
     else:
-        # Create a new record
         user_quiz = UserQuiz(
             user_id=user_id,
             quiz_id=quiz_id,
             raw_score=total_score
         )
 
-    # Add the instance to the session
-    try:
-        db.session.add(user_quiz)
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        print(f"Error in create_quiz: {e}")
-        return jsonify({"error": "An error occurred"}), 500
+    db.session.add(user_quiz)
+    db.session.commit()
 
     return jsonify(user_quiz.to_dict()), 201
+
+
+# @app.route('/quizzes/<quiz_id>/questions/<question_id>/submit', methods=['POST'])
+# def submit_quiz(quiz_id, question_id):
+#     from models.quiz import Quiz
+#     from models.question import Question
+#     from models.user import UserQuiz
+
+#     data = request.get_json()
+#     # print('tests')
+#     session_id = session.get("session_id")
+#     print(f"Session ID retrieved in submit: {session_id}")
+
+#     if not session_id:
+#         print("No session ID found")
+#         abort(403)
+
+#     user_id = sessions.get(session_id)  
+#     if not user_id:
+#         print(f"User ID not found for session ID: {session_id}")
+#         abort(403)
+
+#     answers = data.get('answers')
+
+    
+    
+#     for answer in answers:
+#         user_answer = answer.get('selectedOption')
+#         print(question_id)
+#         print(user_answer)
+#         if not question_id:
+#             return jsonify({'error': 'question_id not given'})
+        
+#         question = Question.query.get(question_id)
+#         if question:
+#             # print('question')
+#             correct_answer = question.get_correct_answer().text
+#             print(f'correct {correct_answer}')
+#             print(f'user_answer {user_answer}')
+#             if user_answer == correct_answer:
+#                 # print('iscorrect')
+#                 total_score += 1
+
+#     user_quiz = UserQuiz.query.filter_by(user_id=user_id, quiz_id=quiz_id).first()
+
+#     if user_quiz:
+#         # Update the existing record
+#         user_quiz.raw_score = total_score
+    
+#         # user_quiz = user_quiz_record
+#     else:
+#         # Create a new record
+#         user_quiz = UserQuiz(
+#             user_id=user_id,
+#             quiz_id=quiz_id,
+#             question_id=question_id,
+#             raw_score=total_score
+#         )
+#     print(user_quiz.to_dict())
+#     # Add the instance to the session
+#     try:
+#         db.session.add(user_quiz)
+#         db.session.commit()
+#     except Exception as e:
+#         db.session.rollback()
+#         print(f"Error in create_quiz: {e}")
+#         return jsonify({"error": "An error occurred"}), 500
+#     return jsonify(user_quiz.to_dict()), 201
 
 
 
 @app.route('/users/<quiz_id>/result', methods=['GET'])
 def get_user_result(quiz_id):
+    total_score = 0
     session_id = session.get("session_id")
     user_id = sessions.get(session_id)
 
@@ -326,13 +353,17 @@ def get_user_result(quiz_id):
         return jsonify({"error": "User not authenticated"}), 403
 
     user_quiz = UserQuiz.query.filter_by(user_id=user_id, quiz_id=quiz_id).first()
+    quiz = Quiz.query.get(quiz_id)
+    
+    if not user_quiz:
+        return jsonify({"error": "User has not taken the quiz"}), 404
 
-    score = user_quiz.get('raw_score')
-    date_taken = user_quiz.get('date_taken')
+    score = user_quiz.raw_score
+    date_taken = user_quiz.date_taken
     result_data = {
-    "quiz_title": user_quiz.title,
+    "quiz_title": quiz.title,
     "raw_score": score,
-    "total_questions": len(user_quiz.questions),
+    "total_questions": len(quiz.questions),
     "date_taken": user_quiz.date_taken
     }
     return jsonify(result_data), 200

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import test_img from "../images/test_img.png";
 
 const AllQuizes = () => {
-    const [quizzes, setQuizesData] = useState();
+    const [quizzes, setQuizesData] = useState([]);
+    const navigate = useNavigate();
 
     const fetchQuizzes = async () => {
         try {
@@ -14,6 +15,7 @@ const AllQuizes = () => {
 
             if (response.ok) {
                 const quizzesData = await response.json();
+                console.log("Fetched quizzes:", quizzesData);
                 setQuizesData(quizzesData);
             } else {
                 console.error('Failed to fetch quizzes');
@@ -25,7 +27,7 @@ const AllQuizes = () => {
 
     useEffect(() => {
         fetchQuizzes();
-    }, []); // Empty dependency array ensures this runs once when the component mounts
+    }, []); 
 
     const getBackgroundColor = (level) => {
         switch (level) {
@@ -40,6 +42,11 @@ const AllQuizes = () => {
         }
     };
 
+    const handleTakeQuiz = (quizId) => {
+        navigate(`/quizzes/${quizId}/submit`);
+    };
+    // console.log(quizzes[1]);
+
     return (
         <div id="Allquizes" className="flex flex-col items-center min-h-screen bg-gray-100 dark:bg-gray-900">
             <p className='gothic flex flex-col lg:flex-row justify-center text-3xl py-6 dark:text-gray-200'>
@@ -52,14 +59,20 @@ const AllQuizes = () => {
                             {/* Image Cover */}
                             <img src={test_img} alt="Quiz Cover" className="w-full h-48 object-cover" />
                             <div className='p-4'>
-                                <Link to={`/quizzes/${quiz.id}`} className='text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100'>
+                                <p className='text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100'>
                                     Title: {quiz.title}
-                                </Link>
+                                </p>
                                 <p className='text-gray-700 dark:text-gray-300'>Description: {quiz.description}</p>
                                 <p className='text-gray-700 dark:text-gray-300'>Level: {quiz.level}</p>
-                                <Link to={`/quizzes/${quiz.id}`} className="mt-4 inline-block bg-blue-500 dark:bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 dark:hover:bg-blue-700 transition">
-                                    Take Quiz
-                                </Link>
+                                
+                                {quiz.questions && quiz.questions.length > 0 && (
+                                    <button
+                                        onClick={() => handleTakeQuiz(quiz.id)}
+                                        className="mt-4 inline-block bg-blue-500 dark:bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 dark:hover:bg-blue-700 transition"
+                                    >
+                                        Take Quiz
+                                    </button>
+                                )}
                             </div>
                         </div>
                     ))}
