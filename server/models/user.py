@@ -10,6 +10,7 @@ class UserQuiz(BaseModel):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True, nullable=False)
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'), primary_key=True, nullable=False)
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), nullable=False)
+    
     raw_score = db.Column(db.Integer, nullable=False)
     date_taken = db.Column(db.DateTime, default=datetime.utcnow)
 

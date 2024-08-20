@@ -204,7 +204,10 @@ def get_quiz(quiz_id):
     from models.quiz import Quiz
     from models.question import Question
 
-    quiz = Quiz.query.get(quiz_id)
+    quiz = db.session.get(Quiz, quiz_id)
+    if not quiz:
+        return jsonify({'error': 'Quiz not found'}), 404
+
     quiz_dict = {
             "quiz_id": quiz.id,
             "title": quiz.title,
@@ -291,7 +294,8 @@ def submit_quiz(quiz_id):
     if user_quiz:
         # Update the existing record
         user_quiz.raw_score = total_score
-        user_quiz = user_quiz_record
+    
+        # user_quiz = user_quiz_record
     else:
         # Create a new record
         user_quiz = UserQuiz(
@@ -301,8 +305,13 @@ def submit_quiz(quiz_id):
         )
 
     # Add the instance to the session
-    db.session.add(user_quiz)
-    db.session.commit()
+    try:
+        db.session.add(user_quiz)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error in create_quiz: {e}")
+        return jsonify({"error": "An error occurred"}), 500
 
     return jsonify(user_quiz.to_dict()), 201
 
@@ -334,9 +343,9 @@ def debug_session():
         'session_data': dict(session)
     })
 
-import logging
-logging.basicConfig()
-logging.getLogger('sqlalchemy').setLevel(logging.INFO)
+# import logging
+# logging.basicConfig()
+# logging.getLogger('sqlalchemy').setLevel(logging.INFO)
 
 
 if __name__ == '__main__':
