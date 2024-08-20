@@ -13,7 +13,6 @@ const QuizPage = () => {
 
     useEffect(() => {
         const fetchQuiz = async () => {
-            // console.log("quizId:", quizId);
             try {
                 const response = await fetch(`http://127.0.0.1:5000/quizzes/${quizId}`, {
                     method: 'GET',
@@ -22,7 +21,6 @@ const QuizPage = () => {
 
                 if (response.ok) {
                     const quizData = await response.json();
-                    console.log("quizData:", quizData);
                     setQuiz(quizData);
                 } else {
                     console.error('Failed to fetch quiz');
@@ -36,31 +34,41 @@ const QuizPage = () => {
     }, [quizId]);
 
     const handleOptionChange = (option) => {
+        // Update the selected option for the current question
         setSelectedOption(option);
+
+        // Update the answers array with the selected option for the current question
+        const updatedAnswers = [...answers];
+        const existingAnswerIndex = updatedAnswers.findIndex(
+            (answer) => answer.questionId === quiz.questions[currentQuestionIndex].id
+        );
+
+        if (existingAnswerIndex !== -1) {
+            updatedAnswers[existingAnswerIndex] = {
+                questionId: quiz.questions[currentQuestionIndex].id,
+                selectedOption
+            };
+        } else {
+            updatedAnswers.push({
+                questionId: quiz.questions[currentQuestionIndex].id,
+                selectedOption
+            });
+        }
+
+        setAnswers(updatedAnswers);
     };
 
     const handleSubmit = async () => {
-        if (selectedOption !== null) {
-            // Add the last answer
-            setAnswers([...answers, { questionId: quiz.questions[currentQuestionIndex].id, selectedOption }]);
-
+        if (answers.length === quiz.questions.length) {
             try {
-
-                // const userId = await fetchUserId();
-
-                const userAnswers = answers.reduce((acc, answer) => {
-                    acc[answer.questionId] = answer.selectedOption;
-                    console.log("Test");
-                    return acc;
-
-                }, {});
-
+                // You can get userId from session or context if needed
                 const response = await fetch(`http://127.0.0.1:5000/quizzes/${quizId}/take`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     credentials: 'include',
+
                     body: JSON.stringify({ answer: userAnswers })
                 });
 
@@ -77,14 +85,25 @@ const QuizPage = () => {
                 alert('An error occurred while submitting the quiz');
             }
         } else {
-            alert('Please select an option before submitting.');
+            alert('Please answer all questions before submitting.');
         }
     };
 
     const handlePreviousQuestion = () => {
         if (currentQuestionIndex > 0) {
             setCurrentQuestionIndex(currentQuestionIndex - 1);
-            setSelectedOption(answers[currentQuestionIndex - 1]?.selectedOption || null);
+            setSelectedOption(
+                answers.find((ans) => ans.questionId === quiz.questions[currentQuestionIndex - 1]?.id)?.selectedOption || null
+            );
+        }
+    };
+
+    const handleNextQuestion = () => {
+        if (currentQuestionIndex < quiz.questions.length - 1) {
+            setCurrentQuestionIndex(currentQuestionIndex + 1);
+            setSelectedOption(
+                answers.find((ans) => ans.questionId === quiz.questions[currentQuestionIndex + 1]?.id)?.selectedOption || null
+            );
         }
     };
 
@@ -125,6 +144,13 @@ const QuizPage = () => {
                             Previous
                         </button>
                         <button
+                            onClick={handleNextQuestion}
+                            className="bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 px-8 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+                            disabled={currentQuestionIndex === quiz.questions.length - 1}
+                        >
+                            Next
+                        </button>
+                        <button
                             onClick={handleSubmit}
                             className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-3 px-8 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
                         >
@@ -134,5 +160,7 @@ const QuizPage = () => {
                 </div>
             </section>
         </div>
-    )};
+    );
+};
+
 export default QuizPage;

@@ -226,42 +226,86 @@ def get_quiz(quiz_id):
     return jsonify(quiz_dict)
 
 
+# @app.route('/quizzes/<quiz_id>/submit', methods=['POST'])
+# def submit_quiz(quiz_id):
+#     from models.quiz import Quiz
+#     from models.question import Question
+#
+#     data = request.get_json()
+#     user_id = data.get('user_id')
+#     answers = data.get('answers')
+#
+#     total_score = 0
+#
+#     for answer in answers:
+#         question_id = answer.get('question_id')
+#         user_answer = answer.get('answer')
+#
+#         question = Question.query.get(question_id)
+#         correct_answer = question.get_correct_answer()
+#
+#         if user_answer == correct_answer:
+#             total_score += 1
+#
+#     user_quiz = UserQuiz.query.filter_by(user_id=user_id, quiz_id=quiz_id).first()
+#
+#     if user_quiz:
+#         user_quiz.raw_score = total_score
+#     else:
+#         user_quiz = UserQuiz(
+#             user_id=user_id,
+#             quiz_id=quiz_id,
+#             raw_score=total_score
+#         )
+#
+#     db.session.add(user_quiz)
+#     db.session.commit()
+#
+#     return jsonify(user_quiz.to_dict()), 201
+
 @app.route('/quizzes/<quiz_id>/submit', methods=['POST'])
 def submit_quiz(quiz_id):
     from models.quiz import Quiz
     from models.question import Question
-    
+    from models.user import UserQuiz
+
     data = request.get_json()
-    user_id = data.get('user_id')
+    user_id = session.get('user_id')  # Fetch user ID from session or another source
     answers = data.get('answers')
 
     total_score = 0
 
     for answer in answers:
-        question_id = answer.get('question_id')
-        user_answer = answer.get('answer')
-        
-        question = Question.query.get(question_id)
-        correct_answer = question.get_correct_answer()
-        
-        if user_answer == correct_answer:
-            total_score += 1
+        question_id = answer.get('questionId')  # Adjusted to match the frontend key
+        user_answer = answer.get('selectedOption')  # Adjusted to match the frontend key
 
+        question = Question.query.get(question_id)
+        if question:
+            correct_answer = question.get_correct_answer()
+            if user_answer == correct_answer:
+                total_score += 1
+
+    # Fetch the existing user_quiz record if it exists
     user_quiz = UserQuiz.query.filter_by(user_id=user_id, quiz_id=quiz_id).first()
 
     if user_quiz:
+        # Update the existing record
         user_quiz.raw_score = total_score
+        user_quiz = user_quiz_record
     else:
+        # Create a new record
         user_quiz = UserQuiz(
             user_id=user_id,
             quiz_id=quiz_id,
             raw_score=total_score
         )
-    
+
+    # Add the instance to the session
     db.session.add(user_quiz)
     db.session.commit()
 
     return jsonify(user_quiz.to_dict()), 201
+
 
 
 @app.route('/users/<quiz_id>/result', methods=['GET'])
