@@ -36,7 +36,7 @@ start_flask() {
     # source /path/to/your/venv/bin/activate
     
     # Run  Flask app (you might need to adjust this command)
-    python3 /home/oumaima/Documents/QuizWebApp/server/app.py
+    python3 app.py
 }
 
 # Run the functions

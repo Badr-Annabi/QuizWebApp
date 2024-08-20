@@ -196,12 +196,31 @@ def all_quizzes():
     return jsonify(quizzes), 200
 
 
-@app.route('/quizzes/<int:quiz_id>', methods=['GET'])
+@app.route('/quizzes/<quiz_id>', methods=['GET'])
 def get_quiz(quiz_id):
     from models.quiz import Quiz
+    from models.question import Question
 
-    quiz = Quiz.query.get_or_404(quiz_id)
-    return jsonify(quiz.to_dict())
+    quiz = Quiz.query.get(quiz_id)
+    quiz_dict = {
+            "quiz_id": quiz.id,
+            "title": quiz.title,
+            "description": quiz.description,
+            "questions": []
+        }
+    for question in quiz.questions:
+        question_dict = {
+        "question_id": question.id,
+        "text": question.text,
+        "answers": []
+        }
+        for answer in question.answers:
+            question_dict["answers"].append({
+                "answer_id": answer.id,
+                "text": answer.text
+            })
+        quiz_dict["questions"].append(question_dict)
+    return jsonify(quiz_dict)
 
 
 @app.route('/quizzes/<quiz_id>/take', methods=['POST'])
@@ -212,7 +231,7 @@ def take_quiz(quiz_id):
     user_id = data.get('user_id')
     user_answers = data.get('answers')
 
-    quiz = Quiz.query.get_or_404(quiz_id)
+    quiz = Quiz.query.get(quiz_id)
     correct_answers = {q.id: q.correct_answer for q in quiz.questions}
 
     raw_score = 0
@@ -233,7 +252,25 @@ def take_quiz(quiz_id):
 
     return jsonify(user_quiz.to_dict()), 201
 
+@app.route('/users/<quiz_id>/result', methods=['GET'])
+def get_user_result(quiz_id):
+    session_id = session.get("session_id")
+    user_id = sessions.get(session_id)
 
+    if not user_id:
+        return jsonify({"error": "User not authenticated"}), 403
+
+    result = UserQuiz.query.filter_by(user_id=user_id, quiz_id=quiz_id).first().get(raw_score)
+
+    quiz = Quiz.query.get(quiz_id)
+    result_data = {
+    "quiz_title": quiz.title,
+    "raw_score": user_quiz.raw_score,
+    "total_questions": len(quiz.questions),
+    "date_taken": user_quiz.date_taken
+    }
+    results.append(result_data)
+    return jsonify(result), 200
 
 @app.route('/debug-session')
 def debug_session():
