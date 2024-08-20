@@ -1,4 +1,4 @@
-from db import db
+from redis_cashing import db
 import uuid
 from datetime import datetime
 
