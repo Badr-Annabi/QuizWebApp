@@ -4,7 +4,7 @@ from uuid import uuid4
 from flask import Flask, request, jsonify, session, abort
 # from werkzeug.security import generate_password_hash, check_password_hash
 from config import DevelopmentConfig, TestingConfig
-from db import db, sessions
+from redis_cashing import db, sessions
 from flask_cors import CORS
 import os
 from models.encrypte import verify_password, hash_password
@@ -199,6 +199,10 @@ def debug_session():
     return jsonify({
         'session_data': dict(session)
     })
+
+import logging
+logging.basicConfig()
+logging.getLogger('sqlalchemy').setLevel(logging.INFO)
 
 
 if __name__ == '__main__':

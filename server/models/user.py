@@ -2,6 +2,15 @@
 from redis_cashing import db
 from .encrypte import hash_password, verify_password
 from .base import BaseModel
+from datetime import datetime
+
+
+class UserQuiz(BaseModel):
+    __tablename__ = 'user_quizzes'
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True, nullable=False)
+    quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'), primary_key=True, nullable=False)
+    raw_score = db.Column(db.Integer, nullable=False)
+    date_taken = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class User(BaseModel):
@@ -13,7 +22,7 @@ class User(BaseModel):
 
     quizzes_created = db.relationship('Quiz', backref='creator', lazy=True)
 
-    quizzes_taken = db.relationship('UserQuiz', backref='user', lazy=True)
+    quizzes_taken = db.relationship('UserQuiz', backref='user')
 
 
     def __init__(self, *args, **kwargs):
