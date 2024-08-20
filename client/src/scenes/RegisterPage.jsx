@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const RegisterPage = () => {
@@ -13,7 +13,7 @@ const RegisterPage = () => {
         confirmPassword: '',
     });
     const [error, setError] = useState('');
-
+    const navigate = useNavigate();
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
@@ -48,9 +48,18 @@ const RegisterPage = () => {
                 },
                 body: JSON.stringify(dataToSubmit)
             });
+            if (data.ok) {
+                navigate(`/login`);
+            }
             console.log('Register Data:', data);
         } catch (error) {
             console.error('Error:', error);
+        }
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            handleSubmit(e);
         }
     };
 
@@ -58,7 +67,7 @@ const RegisterPage = () => {
         <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
             <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md">
                 <h2 className="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-gray-200">Register</h2>
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="space-y-6">
                     <div>
                         <label className="block text-gray-700 dark:text-gray-300 mb-2">First Name</label>
                         <input

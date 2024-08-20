@@ -48,11 +48,17 @@ const LoginPage = () => {
         }
     };
 
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            handleSubmit(e);
+        }
+    }
+
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
             <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md">
                 <h2 className="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-gray-200">Login</h2>
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="space-y-6">
                     <div>
                         <label className="block text-gray-700 dark:text-gray-300 mb-2">Email</label>
                         <input
