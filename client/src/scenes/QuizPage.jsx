@@ -13,6 +13,7 @@ const QuizPage = () => {
 
     useEffect(() => {
         const fetchQuiz = async () => {
+            // console.log("quizId:", quizId);
             try {
                 const response = await fetch(`http://127.0.0.1:5000/quizzes/${quizId}`, {
                     method: 'GET',
@@ -21,6 +22,7 @@ const QuizPage = () => {
 
                 if (response.ok) {
                     const quizData = await response.json();
+                    console.log("quizData:", quizData);
                     setQuiz(quizData);
                 } else {
                     console.error('Failed to fetch quiz');
@@ -37,15 +39,42 @@ const QuizPage = () => {
         setSelectedOption(option);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (selectedOption !== null) {
+            // Add the last answer
             setAnswers([...answers, { questionId: quiz.questions[currentQuestionIndex].id, selectedOption }]);
-            setSelectedOption(null);
-            if (currentQuestionIndex < quiz.questions.length - 1) {
-                setCurrentQuestionIndex(currentQuestionIndex + 1);
-            } else {
-                alert('Quiz completed!');
-                navigate('/results');
+
+            try {
+
+                // const userId = await fetchUserId();
+
+                const userAnswers = answers.reduce((acc, answer) => {
+                    acc[answer.questionId] = answer.selectedOption;
+                    console.log("Test");
+                    return acc;
+
+                }, {});
+
+                const response = await fetch(`http://127.0.0.1:5000/quizzes/${quizId}/take`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ answers: userAnswers })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert('Quiz completed!');
+                    navigate(`/quizzes/${quizId}/result`);
+                } else {
+                    const errorData = await response.json();
+                    alert(errorData.error || 'Failed to submit quiz');
+                }
+            } catch (error) {
+                console.error('An error occurred while submitting the quiz', error);
+                alert('An error occurred while submitting the quiz');
             }
         } else {
             alert('Please select an option before submitting.');
@@ -69,10 +98,10 @@ const QuizPage = () => {
             <section className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
                 <div className="bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 max-w-3xl w-full mx-4">
                     <h1 className="text-5xl font-extrabold mb-6 text-center text-gray-500 dark:text-white tracking-tight">
-                        {quiz.questions[currentQuestionIndex].text}
+                        {quiz.questions?.[currentQuestionIndex]?.text || "Loading question..."}
                     </h1>
                     <ul className="text-xl text-center mb-8">
-                        {quiz.questions[currentQuestionIndex].answers.map((option, index) => (
+                        {quiz.questions?.[currentQuestionIndex]?.answers?.map((option, index) => (
                             <li key={index} className="my-2">
                                 <button
                                     onClick={() => handleOptionChange(option.text)}
@@ -85,7 +114,7 @@ const QuizPage = () => {
                                     {option.text}
                                 </button>
                             </li>
-                        ))}
+                        )) || <li>Loading options...</li>}
                     </ul>
                     <div className="flex justify-between items-center space-x-4">
                         <button
@@ -105,7 +134,5 @@ const QuizPage = () => {
                 </div>
             </section>
         </div>
-    );
-};
-
+    )};
 export default QuizPage;
