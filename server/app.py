@@ -185,6 +185,15 @@ def submit_answer():
     db.session.commit()
 
     return jsonify(answer.to_dict()), 201
+
+@app.route('/quizzes', methods=['GET'])
+def all_quizes():
+    from models.quiz import Quiz
+    data = Quiz.query.all()
+    quizzes = [quiz.to_dict() for quiz in data]
+    return jsonify(quizzes), 200
+
+
 @app.route('/debug-session')
 def debug_session():
     return jsonify({

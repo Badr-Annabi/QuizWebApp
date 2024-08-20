@@ -6,7 +6,7 @@ class RedisDB:
     def __init__(self):
         self.__engine = redis.Redis(
             host='localhost',  # Redis server hostname or IP address
-            port=6380,         # Default Redis port
+            port=6379,         # Default Redis port
             db=0               # Redis database index (default is 0)
         )
         # self.__engine.flushdb()
