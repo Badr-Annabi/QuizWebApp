@@ -34,10 +34,10 @@ const QuizPage = () => {
     }, [quizId]);
 
     const handleOptionChange = (option) => {
-        // Update the selected option for the current question
+        if (!quiz) return;
+
         setSelectedOption(option);
 
-        // Update the answers array with the selected option for the current question
         const updatedAnswers = [...answers];
         const existingAnswerIndex = updatedAnswers.findIndex(
             (answer) => answer.questionId === quiz.questions[currentQuestionIndex].id
@@ -46,12 +46,12 @@ const QuizPage = () => {
         if (existingAnswerIndex !== -1) {
             updatedAnswers[existingAnswerIndex] = {
                 questionId: quiz.questions[currentQuestionIndex].id,
-                selectedOption
+                selectedOption: option
             };
         } else {
             updatedAnswers.push({
                 questionId: quiz.questions[currentQuestionIndex].id,
-                selectedOption
+                selectedOption: option
             });
         }
 
@@ -59,17 +59,17 @@ const QuizPage = () => {
     };
 
     const handleSubmit = async () => {
+        if (!quiz) return;
+
         if (answers.length === quiz.questions.length) {
             try {
-                // You can get userId from session or context if needed
-                const response = await fetch(`http://127.0.0.1:5000/quizzes/${quizId}/take`, {
+                const response = await fetch(`http://127.0.0.1:5000/quizzes/${quizId}/submit`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     credentials: 'include',
-
-                    body: JSON.stringify({ answer: userAnswers })
+                    body: JSON.stringify({ answers })
                 });
 
                 if (response.ok) {
@@ -90,6 +90,8 @@ const QuizPage = () => {
     };
 
     const handlePreviousQuestion = () => {
+        if (!quiz) return;
+
         if (currentQuestionIndex > 0) {
             setCurrentQuestionIndex(currentQuestionIndex - 1);
             setSelectedOption(
@@ -99,6 +101,8 @@ const QuizPage = () => {
     };
 
     const handleNextQuestion = () => {
+        if (!quiz) return;
+
         if (currentQuestionIndex < quiz.questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setSelectedOption(
@@ -110,6 +114,8 @@ const QuizPage = () => {
     if (!quiz) {
         return <div>Loading...</div>;
     }
+
+    const isLastQuestion = currentQuestionIndex === quiz.questions.length - 1;
 
     return (
         <div>
@@ -143,19 +149,21 @@ const QuizPage = () => {
                         >
                             Previous
                         </button>
-                        <button
-                            onClick={handleNextQuestion}
-                            className="bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 px-8 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
-                            disabled={currentQuestionIndex === quiz.questions.length - 1}
-                        >
-                            Next
-                        </button>
-                        <button
-                            onClick={handleSubmit}
-                            className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-3 px-8 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
-                        >
-                            Submit
-                        </button>
+                        {isLastQuestion ? (
+                            <button
+                                onClick={handleSubmit}
+                                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-3 px-8 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+                            >
+                                Submit
+                            </button>
+                        ) : (
+                            <button
+                                onClick={handleNextQuestion}
+                                className="bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 px-8 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+                            >
+                                Next
+                            </button>
+                        )}
                     </div>
                 </div>
             </section>
