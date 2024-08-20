@@ -241,7 +241,7 @@ def submit_quiz(quiz_id):
         question_id = answer.get('question_id')
         user_answer = answer.get('answer')
         
-        question = Question.get(question_id)
+        question = Question.query.get(question_id)
         correct_answer = question.get_correct_answer()
         
         if user_answer == correct_answer:
