@@ -24,7 +24,7 @@ root.render(
             <Route path="/login" element={<LoginPage/>} />
             <Route path="/register" element={<RegisterPage/>} />
             <Route path="/about" element={<About/>} />
-            <Route path="/quizzes/:quizId" element={
+            <Route path="/quizzes/:quizId/submit" element={
                 <PrivateRoute accessible={false}>
                     <QuizPage/>
                 </PrivateRoute>

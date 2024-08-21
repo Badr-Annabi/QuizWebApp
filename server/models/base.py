@@ -7,7 +7,7 @@ class BaseModel(db.Model):
     __abstract__ = True
 
     id = db.Column(db.String(60), primary_key=True, default=lambda:
-                str(uuid.uuid4()))
+                str(uuid.uuid4()), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -24,7 +24,11 @@ class BaseModel(db.Model):
 
     @classmethod
     def get(cls, id):
-        return cls.query.get(id)
+        
+        instance = cls.query.get(id)
+        if instance:
+            return instance
+        return None
 
     @classmethod
     def update(cls, id, **kwargs):

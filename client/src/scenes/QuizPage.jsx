@@ -5,6 +5,7 @@ import Header from "../components/Header";
 
 const QuizPage = () => {
     const { quizId } = useParams();
+    const { questionId } = useParams();
     const navigate = useNavigate();
     const [quiz, setQuiz] = useState(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -66,7 +67,7 @@ const QuizPage = () => {
     const handleSubmit = async () => {
         if (!quiz) return;
 
-        if (answers.length === quiz.questions.length) {
+        if (answers.length <= quiz.questions.length) {
             try {
                 const response = await fetch(`http://127.0.0.1:5000/quizzes/${quizId}/submit`, {
                     method: 'POST',
@@ -113,6 +114,13 @@ const QuizPage = () => {
             setSelectedOption(
                 answers.find((ans) => ans.questionId === quiz.questions[currentQuestionIndex + 1]?.id)?.selectedOption || null
             );
+            // const nextQuestion = quiz.questions[currentQuestionIndex + 1];
+            // console.log(nextQuestion);
+            // const nextQuestionId = nextQuestion.question_id;
+
+            // Navigate to the URL for the next question
+            navigate(`/quizzes/${quizId}/submit`);
+
         }
     };
 
