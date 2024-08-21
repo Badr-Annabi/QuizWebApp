@@ -23,12 +23,12 @@ class BaseModel(db.Model):
         return instance
 
     @classmethod
-    def get(cls, id, attr):
+    def get(cls, id):
         
         instance = cls.query.get(id)
         if instance:
-            value = getattr(instance, attr)
-        return value
+            return instance
+        return None
 
     @classmethod
     def update(cls, id, **kwargs):

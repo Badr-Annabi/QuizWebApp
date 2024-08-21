@@ -242,17 +242,26 @@ def submit_quiz(quiz_id):
     from models.question import Question
 
     data = request.get_json()
-    user_id = data.get('user_id')
+    session_id = session.get("session_id")
+    print(f"Session ID retrieved in submit: {session_id}")
+
+    if not session_id:
+        print("No session ID found")
+        abort(403)
+
+    user_id = sessions.get(session_id)  
+    if not user_id:
+        print(f"User ID not found for session ID: {session_id}")
+        abort(403)
     print(user_id)
     answers = data.get('answers')
 
     total_score = 0
-
+    quiz = Quiz.get(quiz_id)
     for answer in answers:
-        # question_id = answer.get('question_id')
         user_answer = answer.get('selectedOption')
         print(answer)
-        # question = Question.query.get( .get('question_id'))
+        # # question = Question.query.get(answer.get('question_id'))
         # print(question)
         # correct_answer = question.get_correct_answer().text
         # if user_answer == correct_answer:
@@ -268,8 +277,14 @@ def submit_quiz(quiz_id):
             raw_score=total_score
         )
 
-    db.session.add(user_quiz)
-    db.session.commit()
+    try:
+        db.session.add(user_quiz)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error in create_quiz: {e}")
+        return jsonify({"error": "An error occurred"}), 500
+    return jsonify(user_quiz.to_dict()), 201
 
     return jsonify(user_quiz.to_dict()), 201
 
