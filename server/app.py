@@ -258,14 +258,17 @@ def submit_quiz(quiz_id):
 
     total_score = 0
     quiz = Quiz.get(quiz_id)
+    questions = quiz.questions
+
     for answer in answers:
         user_answer = answer.get('selectedOption')
         print(answer)
-        # # question = Question.query.get(answer.get('question_id'))
-        # print(question)
-        # correct_answer = question.get_correct_answer().text
-        # if user_answer == correct_answer:
-        #     total_score += 1
+        print(answer.get('questionId'))
+        question = Question.get(answer.get('questionId'))
+        print(question)
+        correct_answer = question.get_correct_answer().text
+        if user_answer == correct_answer:
+            total_score += 1
     user_quiz = UserQuiz.query.filter_by(user_id=user_id, quiz_id=quiz_id).first()
 
     if user_quiz:
