@@ -24,7 +24,7 @@ class User(BaseModel):
 
     quizzes_created = db.relationship('Quiz', backref='creator', lazy=True)
 
-    quizzes_taken = db.relationship('UserQuiz', backref='user')
+    quizzes_taken = db.relationship('UserQuiz', backref='user', cascade="all, delete-orphan")
 
 
     def __init__(self, *args, **kwargs):

@@ -15,12 +15,6 @@ class BaseModel(db.Model):
         """Initialization for the base object."""
         super().__init__(*args, **kwargs)
 
-    @classmethod
-    def create(cls, **kwargs):
-        instance = cls(**kwargs)
-        db.session.add(instance)
-        db.session.commit()
-        return instance
 
     @classmethod
     def get(cls, id):

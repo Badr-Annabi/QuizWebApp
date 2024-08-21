@@ -392,9 +392,77 @@ def debug_session():
         'session_data': dict(session)
     })
 
-# import logging
-# logging.basicConfig()
-# logging.getLogger('sqlalchemy').setLevel(logging.INFO)
+@app.route('/quizzes/<quiz_id>', methods=['PUT'])
+def update_quiz(quiz_id):
+    data = request.get_json()
+    quiz = Quiz.update(quiz_id, **data)
+    if not quiz:
+        return jsonify({'error': 'Quiz not found'}), 404
+    return jsonify(quiz.to_dict()), 200
+
+@app.route('/quizzes/<quiz_id>', methods=['DELETE'])
+def delete_quiz(quiz_id):
+    
+    quiz = Quiz.delete(quiz_id)
+    if not quiz:
+        return jsonify({'error': 'Quiz not found'}), 404
+    return jsonify({'message': 'Quiz deleted successfully'}), 200
+
+@app.route('/users/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    from models.user import User
+
+    # Check if user is authenticated
+    session_id = session.get("session_id")
+    if not session_id:
+        abort(403, description="Authentication required. No session ID found.")
+
+    # Get user associated with the session
+    logged_in_user_id = sessions.get(session_id)
+    if not logged_in_user_id:
+        abort(403, description="Invalid session. User not found for the session ID.")
+
+    user = User.query.filter_by(id=logged_in_user_id).first()
+    if not user:
+        abort(403, description="User not found.")
+
+    # Verify that the user can only update their own data
+    if user.id != user_id:
+        abort(403, description="You are not authorized to update this user.")
+
+    data = request.json
+
+    User.update(user_id, **data)
+
+    return jsonify({"message": "User updated successfully", "user": user.to_dict()})
+
+@app.route('/users/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    from models.user import User
+
+    # Check if user is authenticated
+    session_id = session.get("session_id")
+    if not session_id:
+        abort(403, description="Authentication required. No session ID found.")
+
+    # Get user associated with the session
+    logged_in_user_id = sessions.get(session_id)
+    if not logged_in_user_id:
+        abort(403, description="Invalid session. User not found for the session ID.")
+
+    user = User.query.filter_by(id=logged_in_user_id).first()
+    if not user:
+        abort(403, description="User not found.")
+
+    # Verify that the user can only delete their own account
+    if user.id != user_id:
+        abort(403, description="You are not authorized to delete this user.")
+
+    # Delete the user
+    User.delete(user_id)
+
+    return jsonify({"message": "User deleted successfully"})
+
 
 
 if __name__ == '__main__':
