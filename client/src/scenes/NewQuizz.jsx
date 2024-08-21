@@ -217,7 +217,7 @@ const NewQuizz = () => {
                             type="submit"
                             className="w-full text-center py-3 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-all"
                         >
-                            Submit Quiz
+                            Create Quiz
                         </button>
                     </form>
                 </div>

@@ -5,6 +5,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [registerMessage, setRegisterMessage] = useState('');
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -51,7 +52,10 @@ const RegisterPage = () => {
             if (data.ok) {
                 navigate(`/login`);
             }
-            console.log('Register Data:', data);
+            else if (data.status === 400) {
+                console.log('User already registered');
+                setRegisterMessage('User already registered');
+            }
         } catch (error) {
             console.error('Error:', error);
         }
@@ -147,6 +151,7 @@ const RegisterPage = () => {
                         Register
                     </button>
                 </form>
+                {registerMessage && <p className='mt-2 text-red-800'>{registerMessage}</p>}
                 <p className="text-center text-gray-600 dark:text-gray-400 mt-4">
                     Already have an account?{' '}
                     <Link to="/login" className="text-blue-500 hover:underline">
