@@ -8,10 +8,9 @@ class Quiz(BaseModel):
     description = db.Column(db.String(255))
     level = db.Column(db.String(10), nullable=False)
     creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    # creator = db.relationship('User', backref='quizzes')
-    questions = db.relationship('Question', backref='quiz')
+    questions = db.relationship('Question', backref='quiz', cascade="all, delete-orphan")
 
-    taken_by_users = db.relationship('UserQuiz', backref='quiz')
+    taken_by_users = db.relationship('UserQuiz', backref='quiz', cascade="all, delete-orphan")
 
     def to_dict(self):
         """Return a dictionary representation of the Quiz."""
