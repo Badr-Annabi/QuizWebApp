@@ -39,18 +39,23 @@ const QuizPage = () => {
         setSelectedOption(option);
 
         const updatedAnswers = [...answers];
+        const questionId = quiz.questions[currentQuestionIndex].question_id;
+        console.log("Quiz:", quiz);
+        console.log("index:", currentQuestionIndex);
+
+        console.log("QuestionID:",questionId);
         const existingAnswerIndex = updatedAnswers.findIndex(
-            (answer) => answer.questionId === quiz.questions[currentQuestionIndex].id
+            (answer) => answer.questionId === questionId
         );
 
         if (existingAnswerIndex !== -1) {
             updatedAnswers[existingAnswerIndex] = {
-                questionId: quiz.questions[currentQuestionIndex].id,
+                questionId: questionId,
                 selectedOption: option
             };
         } else {
             updatedAnswers.push({
-                questionId: quiz.questions[currentQuestionIndex].id,
+                questionId: questionId,
                 selectedOption: option
             });
         }
