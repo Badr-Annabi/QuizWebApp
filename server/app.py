@@ -79,7 +79,7 @@ def signup():
         return jsonify({'error': 'User already exists'}), 400
 
     # hashed_password = generate_password_hash(password, method='bcrypt')
-    new_user = User(email=email, password=password, first_name=first_name, last_name=last_name)
+    new_user = User(email=email, password=password, firstName=first_name, lastName=last_name)
     db.session.add(new_user)
     db.session.commit()
 
@@ -105,6 +105,7 @@ def login():
     print("session_id: {}: #### user_id:{} ".format(session_id, user.id))
     sessions.set(session_id, str(user.id))
     session['session_id'] = session_id
+    print(f"")
     print(f"User ID set in session: {session.get('session_id')}")
     return jsonify({'message': 'Login successful'}), 200
 
@@ -289,77 +290,6 @@ def submit_quiz(quiz_id):
         return jsonify({"error": "An error occurred"}), 500
     return jsonify(user_quiz.to_dict()), 201
 
-    return jsonify(user_quiz.to_dict()), 201
-
-
-# @app.route('/quizzes/<quiz_id>/questions/<question_id>/submit', methods=['POST'])
-# def submit_quiz(quiz_id, question_id):
-#     from models.quiz import Quiz
-#     from models.question import Question
-#     from models.user import UserQuiz
-
-#     data = request.get_json()
-#     # print('tests')
-#     session_id = session.get("session_id")
-#     print(f"Session ID retrieved in submit: {session_id}")
-
-#     if not session_id:
-#         print("No session ID found")
-#         abort(403)
-
-#     user_id = sessions.get(session_id)  
-#     if not user_id:
-#         print(f"User ID not found for session ID: {session_id}")
-#         abort(403)
-
-#     answers = data.get('answers')
-
-    
-    
-#     for answer in answers:
-#         user_answer = answer.get('selectedOption')
-#         print(question_id)
-#         print(user_answer)
-#         if not question_id:
-#             return jsonify({'error': 'question_id not given'})
-        
-#         question = Question.query.get(question_id)
-#         if question:
-#             # print('question')
-#             correct_answer = question.get_correct_answer().text
-#             print(f'correct {correct_answer}')
-#             print(f'user_answer {user_answer}')
-#             if user_answer == correct_answer:
-#                 # print('iscorrect')
-#                 total_score += 1
-
-#     user_quiz = UserQuiz.query.filter_by(user_id=user_id, quiz_id=quiz_id).first()
-
-#     if user_quiz:
-#         # Update the existing record
-#         user_quiz.raw_score = total_score
-    
-#         # user_quiz = user_quiz_record
-#     else:
-#         # Create a new record
-#         user_quiz = UserQuiz(
-#             user_id=user_id,
-#             quiz_id=quiz_id,
-#             question_id=question_id,
-#             raw_score=total_score
-#         )
-#     print(user_quiz.to_dict())
-#     # Add the instance to the session
-#     try:
-#         db.session.add(user_quiz)
-#         db.session.commit()
-#     except Exception as e:
-#         db.session.rollback()
-#         print(f"Error in create_quiz: {e}")
-#         return jsonify({"error": "An error occurred"}), 500
-#     return jsonify(user_quiz.to_dict()), 201
-
-
 
 @app.route('/users/<quiz_id>/result', methods=['GET'])
 def get_user_result(quiz_id):
@@ -408,7 +338,7 @@ def delete_quiz(quiz_id):
         return jsonify({'error': 'Quiz not found'}), 404
     return jsonify({'message': 'Quiz deleted successfully'}), 200
 
-@app.route('/users/<int:user_id>', methods=['PUT'])
+@app.route('/users/<user_id>', methods=['PUT'])
 def update_user(user_id):
     from models.user import User
 
@@ -436,12 +366,12 @@ def update_user(user_id):
 
     return jsonify({"message": "User updated successfully", "user": user.to_dict()})
 
-@app.route('/users/<int:user_id>', methods=['DELETE'])
+@app.route('/users/<user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    from models.user import User
-
+    
     # Check if user is authenticated
     session_id = session.get("session_id")
+    print(f"Session ID retrieved in submit: {session_id}")
     if not session_id:
         abort(403, description="Authentication required. No session ID found.")
 

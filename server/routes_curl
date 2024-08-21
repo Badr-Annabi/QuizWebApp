@@ -1,5 +1,5 @@
 # signup
-curl -X POST http://127.0.0.1:5000/signup -H "Content-Type: application/json" -c cookies.txt -d '{"email": "user@example.com", "password": "password123", "first_name": "John", "last_name": "Doe"}'
+curl -X POST http://127.0.0.1:5000/signup -H "Content-Type: application/json" -c cookies.txt -d '{"email": "user@example.com", "password": "password123", "firstName": "John", "lastName": "Doe"}'
 
 
 
