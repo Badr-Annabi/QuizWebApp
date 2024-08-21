@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Header from "../components/Header";
 
@@ -9,6 +10,8 @@ const NewQuizz = () => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [level, setLevel] = useState('easy'); // Default level is '1'
+
+    const navigate = useNavigate();
 
     const handleQuestionChange = (index, value) => {
         const newQuestions = [...questions];
@@ -71,6 +74,7 @@ const NewQuizz = () => {
 
             if (response.ok) {
                 console.log('Quiz submitted successfully');
+                navigate('/');
             } else {
                 console.error('Failed to submit quiz');
             }
