@@ -7,7 +7,7 @@ class Question(BaseModel):
     __tablename__ = 'questions'
     text = db.Column(db.String(255), nullable=False)
     quiz_id = db.Column(db.Integer, db.ForeignKey('quizzes.id'), nullable=False)
-    answers = db.relationship('Answer', backref='questions')
+    answers = db.relationship('Answer', backref='questions', cascade="all, delete-orphan")
 
 
     def get_correct_answer(self):

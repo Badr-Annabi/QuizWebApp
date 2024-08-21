@@ -30,15 +30,22 @@ class BaseModel(db.Model):
         if instance:
             for key, value in kwargs.items():
                 setattr(instance, key, value)
-            db.session.commit()
+            try:
+                db.session.commit()
+            except Exception as e:
+                print(e)
+        instance = cls.query.get(id) # get the updated instance from database
         return instance
 
     @classmethod
     def delete(cls, id):
-        instance = cls.query.get(id)
-        if instance:
-            db.session.delete(instance)
-            db.session.commit()
+        try:
+            instance = cls.query.get(id)
+            if instance:
+                db.session.delete(instance)
+                db.session.commit()
+        except Exception as e:
+            print(e)
         return instance
 
     def to_dict(self):
@@ -50,5 +57,6 @@ class BaseModel(db.Model):
             new_dict["__class__"] = self.__class__.__name__
         if "_sa_instance_state" in new_dict:
             del new_dict["_sa_instance_state"]
+        # print("BaseModel to_dict:", new_dict) 
         return new_dict
-#         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+

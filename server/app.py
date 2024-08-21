@@ -324,6 +324,24 @@ def debug_session():
 
 @app.route('/quizzes/<quiz_id>', methods=['PUT'])
 def update_quiz(quiz_id):
+    # Check if user is authenticated
+    session_id = session.get("session_id")
+    if not session_id:
+        abort(403, description="Authentication required. No session ID found.")
+
+    # Get user associated with the session
+    logged_in_user_id = sessions.get(session_id)
+    if not logged_in_user_id:
+        abort(403, description="Invalid session. User not found for the session ID.")
+
+    user = User.query.filter_by(id=logged_in_user_id).first()
+    if not user:
+        abort(403, description="User not found.")
+
+    # Verify that the user can only update their own quiz
+    quiz_gotten = Quiz.get(quiz_id)
+    if user.id != quiz_gotten.creator_id:
+        abort(403, description="You are not authorized to update this quiz.")
     data = request.get_json()
     quiz = Quiz.update(quiz_id, **data)
     if not quiz:
@@ -332,12 +350,29 @@ def update_quiz(quiz_id):
 
 @app.route('/quizzes/<quiz_id>', methods=['DELETE'])
 def delete_quiz(quiz_id):
-    
-    quiz = Quiz.delete(quiz_id)
-    if not quiz:
-        return jsonify({'error': 'Quiz not found'}), 404
-    return jsonify({'message': 'Quiz deleted successfully'}), 200
+    # Check if user is authenticated
+    session_id = session.get("session_id")
+    if not session_id:
+        abort(403, description="Authentication required. No session ID found.")
 
+    # Get user associated with the session
+    logged_in_user_id = sessions.get(session_id)
+    if not logged_in_user_id:
+        abort(403, description="Invalid session. User not found for the session ID.")
+
+    user = User.query.filter_by(id=logged_in_user_id).first()
+    if not user:
+        abort(403, description="User not found.")
+
+    # Verify that the user can only update their own quiz
+    quiz_gotten = Quiz.get(quiz_id)
+    if not quiz_gotten:
+        abort(403, description="Quiz not found")
+    if user.id != quiz_gotten.creator_id:
+        abort(403, description="You are not authorized to delete this quiz.")
+    quiz = Quiz.delete(quiz_id)
+
+    return jsonify({'message': 'Quiz deleted successfully'}), 200
 @app.route('/users/<user_id>', methods=['PUT'])
 def update_user(user_id):
     from models.user import User
@@ -368,7 +403,7 @@ def update_user(user_id):
 
 @app.route('/users/<user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    
+
     # Check if user is authenticated
     session_id = session.get("session_id")
     print(f"Session ID retrieved in submit: {session_id}")
