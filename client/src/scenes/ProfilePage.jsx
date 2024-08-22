@@ -13,6 +13,7 @@ const ProfilePage = () => {
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [incorrectPassword, setIncorrectPassword] = useState('');
     const navigate = useNavigate();
 
     const handleInputChange = (e) => {
@@ -42,14 +43,17 @@ const ProfilePage = () => {
                 body: JSON.stringify(requestBody),
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to update user information');
-            }
+            if (response.status === 401) {
+                // const errorData = await response.json();
+                // throw new Error(errorData.error || 'Failed to update user information');
+                setIncorrectPassword('Incorrect password')
 
-            const data = await response.json();
-            alert('User information updated successfully');
-            console.log('Updated user:', data);
+            } else {
+
+                const data = await response.json();
+                alert('User information updated successfully');
+                console.log('Updated user:', data);
+            }
 
         } catch (error) {
             console.error('Error updating user:', error);
@@ -144,6 +148,7 @@ const ProfilePage = () => {
                                         {showCurrentPassword ? <EyeSlashIcon className="w-5 h-5"/> :
                                             <EyeIcon className="w-5 h-5"/>}
                                     </button>
+                                    {incorrectPassword && <p className='mt-2 text-red-800'>{incorrectPassword}</p>}
                                 </div>
                             </div>
 
@@ -166,6 +171,7 @@ const ProfilePage = () => {
                                         {showNewPassword ? <EyeSlashIcon className="w-5 h-5"/> :
                                             <EyeIcon className="w-5 h-5"/>}
                                     </button>
+                                    
                                 </div>
                             </div>
 

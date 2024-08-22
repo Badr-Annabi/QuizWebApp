@@ -25,6 +25,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-instance/db.db
-instance/test_db.db
+server/instance/db.db
+server/instance/test_db.db
 cookies.txt
