@@ -5,7 +5,7 @@ import Header from "../components/Header";
 
 const NewQuizz = () => {
     const [questions, setQuestions] = useState([
-        { question: '', answers: [''], correctAnswer: '' }
+        { question: '', answers: [['']], isCorrect: '' }
     ]);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -39,12 +39,12 @@ const NewQuizz = () => {
 
     const handleCorrectAnswerChange = (qIndex, answer) => {
         const newQuestions = [...questions];
-        newQuestions[qIndex].correctAnswer = answer;
+        newQuestions[qIndex].isCorrect = answer;
         setQuestions(newQuestions);
     };
 
     const addQuestion = () => {
-        setQuestions([...questions, { question: '', answers: [''], correctAnswer: '' }]);
+        setQuestions([...questions, { question: '', answers: [['']], isCorrect: '' }]);
     };
 
     const removeQuestion = (index) => {
@@ -200,9 +200,9 @@ const NewQuizz = () => {
                                             <button
                                                 type="button"
                                                 onClick={() => handleCorrectAnswerChange(qIndex, answer)}
-                                                className={`p-1 rounded-full ${q.correctAnswer === answer ? 'text-green-500 bg-green-100 dark:bg-green-800' : 'text-gray-500 hover:text-green-500 hover:bg-green-100 dark:hover:bg-green-800 transition-all'}`}
+                                                className={`p-1 rounded-full ${q.isCorrect === answer ? 'text-green-500 bg-green-100 dark:bg-green-800' : 'text-gray-500 hover:text-green-500 hover:bg-green-100 dark:hover:bg-green-800 transition-all'}`}
                                             >
-                                                {q.correctAnswer === answer ? '✔️' : 'Set as Correct'}
+                                                {q.isCorrect === answer ? '✔️' : 'Set as Correct'}
                                             </button>
                                         </div>
                                     ))}
