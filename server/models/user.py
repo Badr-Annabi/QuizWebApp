@@ -41,11 +41,7 @@ class User(BaseModel):
     def check_password(self, password):
         return verify_password(password, self.password)
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'email': self.email,
-            'firstName': self.firstName,
-            'lastName': self.lastName
-        }
 
+    def to_dict(self):
+       data =  super().to_dict()
+       return data

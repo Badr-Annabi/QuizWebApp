@@ -14,3 +14,9 @@ class Question(BaseModel):
         """ get the correct answer object for a specific question"""
         # print(next((answer for answer in self.answers if answer.is_correct), None))
         return next((answer for answer in self.answers if answer.is_correct), None)
+    
+    def to_dict(self):
+        """Return a dictionary representation of the Quiz."""
+        question_dict = super().to_dict()
+        question_dict['answers'] = [answer.to_dict() for answer in self.answers]
+        return question_dict
