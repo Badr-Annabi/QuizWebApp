@@ -29,7 +29,8 @@ class BaseModel(db.Model):
         instance = cls.query.get(id)
         if instance:
             for key, value in kwargs.items():
-                setattr(instance, key, value)
+                if key != 'id':
+                    setattr(instance, key, value)
             try:
                 db.session.commit()
             except Exception as e:

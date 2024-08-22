@@ -324,8 +324,11 @@ def debug_session():
 
 @app.route('/quizzes/<quiz_id>', methods=['PUT'])
 def update_quiz(quiz_id):
+    from models.answer import Answer
     # Check if user is authenticated
+    data = request.get_json()
     session_id = session.get("session_id")
+    print(session_id)
     if not session_id:
         abort(403, description="Authentication required. No session ID found.")
 
@@ -342,11 +345,29 @@ def update_quiz(quiz_id):
     quiz_gotten = Quiz.get(quiz_id)
     if user.id != quiz_gotten.creator_id:
         abort(403, description="You are not authorized to update this quiz.")
-    data = request.get_json()
+    
+    quiz_data = data.get('quiz', {}) # verify how data is sended in front
+    questions_data = data.get('questions', [])
     quiz = Quiz.update(quiz_id, **data)
-    if not quiz:
-        return jsonify({'error': 'Quiz not found'}), 404
-    return jsonify(quiz.to_dict()), 200
+
+    for question_data in questions_data:
+        question_id = question_data.get('id')
+        question = Question.query.filter_by(id=question_id, quiz_id=quiz_id).first()
+        
+        if not question:
+            return jsonify({'error': f'Question {question_id} not found'}), 404
+        
+        question.update(**question_data)
+        answers_data = question_data.get('answers', [])
+        for answer_data in answers_data:
+            answer_id = answer_data.get('id')
+            answer = Answer.query.filter_by(id=answer_id, question_id=question_id).first()
+            
+            if not answer:
+                return jsonify({'error': f'Answer {answer_id} not found'}), 404
+            answer.update(**answer_data)
+    
+    return jsonify(quiz_gotten.to_dict()), 200
 
 @app.route('/quizzes/<quiz_id>', methods=['DELETE'])
 def delete_quiz(quiz_id):
