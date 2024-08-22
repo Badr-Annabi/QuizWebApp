@@ -8,7 +8,7 @@ class RedisDB:
     def __init__(self):
         self.__engine = redis.Redis(
             host='localhost',  # Redis server hostname or IP address
-            port=6380,         # Default Redis port
+            port=6378,         # Default Redis port
             db=0               # Redis database index (default is 0)
         )
         # self.__engine.flushdb()
@@ -34,9 +34,9 @@ class RedisDB:
         except redis.ConnectionError:
             # If Redis server is not running, start it
             print("Starting Redis server...")
-            subprocess.Popen(['redis-server', '--port', '6379'])
+            subprocess.Popen(['redis-server', '--port', '6378'])
             time.sleep(2)
-            print("Redis server started on port 6379.")
+            print("Redis server started on port 6378.")
 
 db = SQLAlchemy()
 sessions = RedisDB()
