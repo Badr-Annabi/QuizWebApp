@@ -38,6 +38,7 @@ class BaseModel(db.Model):
     @classmethod
     def update(cls, id, **kwargs):
         instance = cls.query.get(id)
+        print(f"instance: {instance.to_dict()}")
         if instance:
             for key, value in kwargs.items():
                 if key != 'id' and key != '__class__':
@@ -65,7 +66,11 @@ class BaseModel(db.Model):
 
     def to_dict(self):
         new_dict = self.__dict__.copy()
+<<<<<<< HEAD
         # print("Raw dict before processing:", new_dict)
+=======
+        print("Raw dict before processing:", new_dict)
+>>>>>>> 9d38466f351466df3d35d416dd22c6644fff4daf
         if "created_at" in new_dict:
             new_dict["created_at"] = new_dict["created_at"].strftime(time)
         if "updated_at" in new_dict:
@@ -73,6 +78,10 @@ class BaseModel(db.Model):
             new_dict["__class__"] = self.__class__.__name__
         if "_sa_instance_state" in new_dict:
             del new_dict["_sa_instance_state"]
+<<<<<<< HEAD
         # print("Processed dict:", new_dict)
+=======
+        print("Processed dict:", new_dict)
+>>>>>>> 9d38466f351466df3d35d416dd22c6644fff4daf
         return new_dict
 
