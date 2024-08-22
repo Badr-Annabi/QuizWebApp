@@ -431,8 +431,12 @@ def update_user(user_id):
         abort(403, description="You are not authorized to update this user.")
 
     data = request.json
-
+    new_data = data.pop('id')
+    print(f"New DAta: {new_data}")
+    print(f'Data: {data}')
+    print(f'User_id: {user_id}')
     User.update(user_id, **data)
+
 
     return jsonify({"message": "User updated successfully", "user": user.to_dict()})
 

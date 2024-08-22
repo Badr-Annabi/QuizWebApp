@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Header from "../components/Header";
 
 const NewQuizz = () => {
     const [questions, setQuestions] = useState([
-        { question: '', answers: [''], correctAnswer: '' }
+        { question: '', answers: [{ text: '', isCorrect: false }] }
     ]);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [level, setLevel] = useState('easy'); // Default level is '1'
+    const [level, setLevel] = useState('easy'); // Default level is 'easy'
+
+    const navigate = useNavigate();
 
     const handleQuestionChange = (index, value) => {
         const newQuestions = [...questions];
@@ -18,13 +21,13 @@ const NewQuizz = () => {
 
     const handleAnswerChange = (qIndex, aIndex, value) => {
         const newQuestions = [...questions];
-        newQuestions[qIndex].answers[aIndex] = value;
+        newQuestions[qIndex].answers[aIndex].text = value;
         setQuestions(newQuestions);
     };
 
     const addAnswer = (qIndex) => {
         const newQuestions = [...questions];
-        newQuestions[qIndex].answers.push('');
+        newQuestions[qIndex].answers.push({ text: '', isCorrect: false });
         setQuestions(newQuestions);
     };
 
@@ -34,14 +37,16 @@ const NewQuizz = () => {
         setQuestions(newQuestions);
     };
 
-    const handleCorrectAnswerChange = (qIndex, answer) => {
+    const handleCorrectAnswerChange = (qIndex, aIndex) => {
         const newQuestions = [...questions];
-        newQuestions[qIndex].correctAnswer = answer;
+        newQuestions[qIndex].answers.forEach((ans, index) => {
+            ans.isCorrect = index === aIndex;
+        });
         setQuestions(newQuestions);
     };
 
     const addQuestion = () => {
-        setQuestions([...questions, { question: '', answers: [''], correctAnswer: '' }]);
+        setQuestions([...questions, { question: '', answers: [{ text: '', isCorrect: false }] }]);
     };
 
     const removeQuestion = (index) => {
@@ -56,7 +61,10 @@ const NewQuizz = () => {
             title,
             description,
             level,
-            questions,
+            questions_data: questions.map((q) => ({
+                question: q.question,
+                answers: q.answers,
+            })),
         };
 
         try {
@@ -71,6 +79,7 @@ const NewQuizz = () => {
 
             if (response.ok) {
                 console.log('Quiz submitted successfully');
+                navigate('/');
             } else {
                 console.error('Failed to submit quiz');
             }
@@ -180,7 +189,7 @@ const NewQuizz = () => {
                                         <div key={aIndex} className="flex items-center space-x-4">
                                             <input
                                                 type="text"
-                                                value={answer}
+                                                value={answer.text}
                                                 onChange={(e) => handleAnswerChange(qIndex, aIndex, e.target.value)}
                                                 className="text-gray-900 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                                 placeholder={`Answer ${aIndex + 1}`}
@@ -195,17 +204,18 @@ const NewQuizz = () => {
                                             </button>
                                             <button
                                                 type="button"
-                                                onClick={() => handleCorrectAnswerChange(qIndex, answer)}
-                                                className={`p-1 rounded-full ${q.correctAnswer === answer ? 'text-green-500 bg-green-100 dark:bg-green-800' : 'text-gray-500 hover:text-green-500 hover:bg-green-100 dark:hover:bg-green-800 transition-all'}`}
+                                                onClick={() => handleCorrectAnswerChange(qIndex, aIndex)}
+                                                className={`p-1 rounded-full ${answer.isCorrect ? 'text-green-500 bg-green-100 dark:bg-green-800' : 'text-gray-500 hover:text-green-500 hover:bg-green-100 dark:hover:bg-green-800 transition-all'}`}
                                             >
-                                                {q.correctAnswer === answer ? '✔️' : 'Set as Correct'}
+                                                {answer.isCorrect ? '✔️' : 'Set as Correct'}
                                             </button>
                                         </div>
                                     ))}
                                     <button
                                         type="button"
                                         onClick={() => addAnswer(qIndex)}
-                                        className="flex flex-row items-center text-white p-2 bg-indigo-400 rounded-full shadow-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-all mt-2"
+                                        className="flex flex-row items-center text-white p-2 bg
+                                                                                bg-indigo-400 rounded-full shadow-lg hover:bg-blue-700 dark:hover:bg-blue-800 transition-all mt-2"
                                     >
                                         <PlusIcon className="w-5 h-5"/> Add Answer
                                     </button>
@@ -227,3 +237,4 @@ const NewQuizz = () => {
 }
 
 export default NewQuizz;
+
