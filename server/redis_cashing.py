@@ -28,15 +28,15 @@ class RedisDB:
     def start_redis_server():
         try:
             # Check if Redis server is running by pinging it
-            client = redis.Redis(host='localhost', port=6380, db=0)
+            client = redis.Redis(host='localhost', port=6379, db=0)
             client.ping()
             print("Redis server is already running.")
         except redis.ConnectionError:
             # If Redis server is not running, start it
             print("Starting Redis server...")
-            subprocess.Popen(['redis-server', '--port', '6380'])
+            subprocess.Popen(['redis-server', '--port', '6379'])
             time.sleep(2)
-            print("Redis server started on port 6380.")
+            print("Redis server started on port 6379.")
 
 db = SQLAlchemy()
 sessions = RedisDB()

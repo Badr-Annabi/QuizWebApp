@@ -15,6 +15,17 @@ class BaseModel(db.Model):
         """Initialization for the base object."""
         super().__init__(*args, **kwargs)
 
+    @classmethod
+    def create(cls, *args, **kwargs):
+        """ create instance in database and return it"""
+        instance = cls(*args, **kwargs)
+        instance.save()
+        return cls.get(instance.id)
+    
+    def save(self):
+        """Save the instance to the database."""
+        db.session.add(self)
+        db.session.commit()
 
     @classmethod
     def get(cls, id):
@@ -51,6 +62,7 @@ class BaseModel(db.Model):
 
     def to_dict(self):
         new_dict = self.__dict__.copy()
+        print("Raw dict before processing:", new_dict)
         if "created_at" in new_dict:
             new_dict["created_at"] = new_dict["created_at"].strftime(time)
         if "updated_at" in new_dict:
@@ -58,6 +70,6 @@ class BaseModel(db.Model):
             new_dict["__class__"] = self.__class__.__name__
         if "_sa_instance_state" in new_dict:
             del new_dict["_sa_instance_state"]
-        # print("BaseModel to_dict:", new_dict) 
+        print("Processed dict:", new_dict)
         return new_dict
 
