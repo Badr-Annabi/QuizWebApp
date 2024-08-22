@@ -40,7 +40,7 @@ const Navbar = () => {
 
     const handleProfileClick = () => {
         if (user && user.id) {
-            navigate(`/users/${user.id}`);
+            navigate(`/users/profile`);
             setIsPopoverOpen(false);
         }
     };

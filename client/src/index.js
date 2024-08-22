@@ -24,7 +24,7 @@ root.render(
             }/>
             <Route path="/login" element={<LoginPage/>} />
             <Route path="/register" element={<RegisterPage/>} />
-            <Route path="/users/:userId" element={
+            <Route path="/users/profile" element={
                 <PrivateRoute accessible={false}>
                     <ProfilePage/>
                 </PrivateRoute>
