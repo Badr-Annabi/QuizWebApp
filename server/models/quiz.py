@@ -48,12 +48,12 @@ class Quiz(BaseModel):
                 instance.questions.append(question)
 
                 answers_data = q_data['answers']
-                correct_answer = q_data['correctAnswer']
+                # correct_answer = q_data['isCorrect']
 
                 for a_data in answers_data:
                     answer = Answer(
-                        text=a_data,
-                        is_correct=(a_data == correct_answer),
+                        text=a_data['text'],
+                        isCorrect=(a_data['isCorrect']),
                         question_id=question.id
                     )
                     question.answers.append(answer)

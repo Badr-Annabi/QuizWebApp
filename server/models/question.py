@@ -13,7 +13,7 @@ class Question(BaseModel):
     def get_correct_answer(self):
         """ get the correct answer object for a specific question"""
         # print(next((answer for answer in self.answers if answer.is_correct), None))
-        return next((answer for answer in self.answers if answer.is_correct), None)
+        return next((answer for answer in self.answers if answer.isCorrect), None)
     
     def to_dict(self):
         """Return a dictionary representation of the Quiz."""
