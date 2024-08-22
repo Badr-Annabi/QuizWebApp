@@ -50,6 +50,21 @@ app = create_app()
 
 CORS(app, supports_credentials=True, resources={r"*": {"origins": "*"}})
 
+def get_user_by_session():
+    session_id = session.get("session_id")
+    if not session_id:
+        abort(403, description="Authentication required. No session ID found.")
+
+    # Get user associated with the session
+    logged_in_user_id = sessions.get(session_id)
+    if not logged_in_user_id:
+        abort(403, description="Invalid session. User not found for the session ID.")
+
+    user = User.query.filter_by(id=logged_in_user_id).first()
+    if not user:
+        abort(403, description="User not found.")
+    return user
+    
 
 #######################################################
 #                                                     #
@@ -60,24 +75,7 @@ CORS(app, supports_credentials=True, resources={r"*": {"origins": "*"}})
 @app.route("/@me")
 def check_session():
 
-    session_id = session.get("session_id")
-    # print(f"Session ID retrieved in /@me: {session_id}")
-
-    if not session_id:
-        print("No session ID found")
-        abort(403)
-
-    user_id = sessions.get(session_id)
-    if not user_id:
-        # print(f"User ID not found for session ID: {session_id}")
-        abort(403)
-
-    user = User.query.filter_by(id=user_id).first()
-    if not user:
-        # print(f"No user found with ID: {user_id}")
-        abort(403)
-
-    # print("Session and user found")
+    user = get_user_by_session()
     return jsonify({"user": user.to_dict()})
 
 
@@ -139,19 +137,15 @@ def debug_session():
 @app.route('/quizzes', methods=['POST'])
 def create_quiz():
 
-    session_id = session.get('session_id')
-    # print(f"session_id: {session_id}")
-    if not session_id:
-        abort(403)
-    creator_id = sessions.get(session_id)
-    if not creator_id:
+    user = get_user_by_session()
+    if not user:
         return jsonify({'error': 'Unauthorized'}), 401
 
     data = request.get_json()
-    data['creator_id'] = creator_id
+    data['creator_id'] = user.id
     # print(f"data:{data}")
-    creator = db.session.get(User, creator_id)
-
+    creator = db.session.get(User, user.id)
+    
     if not creator:
         return jsonify({'error': 'Creator not found'}), 404
     new_quiz = Quiz.create(**data)
@@ -168,39 +162,30 @@ def all_quizzes():
     quizzes = [quiz.to_dict() for quiz in quizzes_data]
     return jsonify(quizzes)
 
+# GET created quizzes by logged user
 @app.route('/quizzes/created', methods=['GET'])
 def get_created_quizzes_by_user():
     """ return all quizzes created by user """
-    session_id = session.get("session_id")
-    print(f"Session ID retrieved in submit: {session_id}")
 
-    if not session_id:
-        print("No session ID found")
-        abort(403)
-
-    user_id = sessions.get(session_id)  
-    if not user_id:
+    user = get_user_by_session()
+    if not user:
         # print(f"User ID not found for session ID: {session_id}")
         abort(403, description='Invalid session. User not found for the session ID.')
     
     quizzes_data = Quiz.query.options(joinedload(Quiz.questions).
-                                      joinedload(Question.answers)).filter_by(creator_id=user_id).all()
+                                      joinedload(Question.answers)).filter_by(creator_id=user.id).all()
     quizzes = [quiz.to_dict() for quiz in quizzes_data]
     return jsonify(quizzes)
 
+# GET submitted quizzes by logged user
 @app.route('/quizzes/submitted', methods=['GET'])
 def get_submitted_quizzes_by_user():
     """ return all quizzes submitted by user """
-    session_id = session.get('session_id')
-    if not session_id:
-        abort(403, description="Authentication required. No session ID found.")
-
-    user_id = sessions.get(session_id)
-    if not user_id:
-        abort(403, description="Invalid session. User not found for the session ID.")
+   
+    user = get_user_by_session()
 
     # Query UserQuiz to get all quizzes submitted by the user
-    submitted_quizzes_data = UserQuiz.query.filter_by(user_id=user_id).all()
+    submitted_quizzes_data = UserQuiz.query.filter_by(user_id=user.id).all()
     quiz_ids = [user_quiz.quiz_id for user_quiz in submitted_quizzes_data]
 
     if not quiz_ids:
@@ -220,17 +205,7 @@ def get_submitted_quizzes_by_user():
 @app.route('/quizzes/<quiz_id>', methods=['GET'])
 def get_quiz(quiz_id):
 
-    session_id = session.get("session_id")
-    print(f"Session ID retrieved in submit: {session_id}")
-
-    if not session_id:
-        print("No session ID found")
-        abort(403)
-
-    user_id = sessions.get(session_id)  
-    if not user_id:
-        # print(f"User ID not found for session ID: {session_id}")
-        abort(403, description='Invalid session. User not found for the session ID.')
+    user = get_user_by_session()
         
     # print(quiz_id)
     quiz = Quiz.get(quiz_id)
@@ -263,18 +238,7 @@ def submit_quiz(quiz_id):
 
 
     data = request.get_json()
-    session_id = session.get("session_id")
-    print(f"Session ID retrieved in submit: {session_id}")
-
-    if not session_id:
-        print("No session ID found")
-        abort(403)
-
-    user_id = sessions.get(session_id)  
-    if not user_id:
-        # print(f"User ID not found for session ID: {session_id}")
-        abort(403, description='Invalid session. User not found for the session ID.')
-    # print(user_id)
+    user = get_user_by_session()
     answers = data.get('answers')
 
     total_score = 0
@@ -290,24 +254,18 @@ def submit_quiz(quiz_id):
         correct_answer = question.get_correct_answer().text
         if user_answer == correct_answer:
             total_score += 1
-    user_quiz = UserQuiz.query.filter_by(user_id=user_id, quiz_id=quiz_id).first()
+    user_quiz = UserQuiz.query.filter_by(user_id=user.id, quiz_id=quiz_id).first()
 
     if user_quiz:
         user_quiz.raw_score = total_score
     else:
         user_quiz = UserQuiz(
-            user_id=user_id,
+            user_id=user.id,
             quiz_id=quiz_id,
             raw_score=total_score
         )
 
-    try:
-        db.session.add(user_quiz)
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        print(f"Error in create_quiz: {e}")
-        return jsonify({"error": "An error occurred"}), 500
+    user_quiz.save()
     return jsonify(user_quiz.to_dict()), 201
 
 
@@ -316,24 +274,12 @@ def update_quiz(quiz_id):
 
     # Check if user is authenticated
     data = request.get_json()
-    session_id = session.get("session_id")
-    print(session_id)
-    if not session_id:
-        abort(403, description="Authentication required. No session ID found.")
-
-    # Get user associated with the session
-    logged_in_user_id = sessions.get(session_id)
-    if not logged_in_user_id:
-        abort(403, description="Invalid session. User not found for the session ID.")
-
-    user = User.query.filter_by(id=logged_in_user_id).first()
-    if not user:
-        abort(403, description="User not found.")
+    user = get_user_by_session()
 
     # Verify that the user can only update their own quiz
     quiz_gotten = Quiz.get(quiz_id)
-    print(f'user id {user.id}')
-    print(f'quiz creator id {quiz_gotten.creator_id}')
+    # print(f'user id {user.id}')
+    # print(f'quiz creator id {quiz_gotten.creator_id}')
     if user.id != quiz_gotten.creator_id:
         abort(403, description="You are not authorized to update this quiz.")
     
@@ -345,18 +291,8 @@ def update_quiz(quiz_id):
 @app.route('/quizzes/<quiz_id>', methods=['DELETE'])
 def delete_quiz(quiz_id):
     # Check if user is authenticated
-    session_id = session.get("session_id")
-    if not session_id:
-        abort(403, description="Authentication required. No session ID found.")
-
-    # Get user associated with the session
-    logged_in_user_id = sessions.get(session_id)
-    if not logged_in_user_id:
-        abort(403, description="Invalid session. User not found for the session ID.")
-
-    user = User.query.filter_by(id=logged_in_user_id).first()
-    if not user:
-        abort(403, description="User not found.")
+    user = get_user_by_session()
+    
 
     # Verify that the user can only update their own quiz
     quiz_gotten = Quiz.get(quiz_id)
@@ -413,19 +349,8 @@ def update_user():
     
 
     # Check if user is authenticated
-    session_id = session.get("session_id")
-    if not session_id:
-        abort(403, description="Authentication required. No session ID found.")
-
-    # Get user associated with the session
-    logged_in_user_id = sessions.get(session_id)
-    if not logged_in_user_id:
-        abort(403, description="Invalid session. User not found for the session ID.")
-
-    user = User.query.filter_by(id=logged_in_user_id).first()
-    if not user:
-        abort(403, description="User not found.")
-
+    user = get_user_by_session()
+    
     data = request.json
     if 'currentTextPassword' in data and 'newPassword' in data:
          # Check if the current password is correct
@@ -436,9 +361,9 @@ def update_user():
                 # Update the password
                 user.password = value
         
-    updated_user = User.update(logged_in_user_id, **data)
+    updated_user = User.update(user.id, **data)
 
-    print(f'Updated Users password: {updated_user.password}')
+    # print(f'Updated Users password: {updated_user.password}')
 
 
     return jsonify({"message": "User updated successfully", "user": user.to_dict()})
@@ -447,23 +372,11 @@ def update_user():
 def delete_user():
 
     # Check if user is authenticated
-    session_id = session.get("session_id")
-    print(f"Session ID retrieved in submit: {session_id}")
-    if not session_id:
-        abort(403, description="Authentication required. No session ID found.")
-
-    # Get user associated with the session
-    logged_in_user_id = sessions.get(session_id)
-    if not logged_in_user_id:
-        abort(403, description="Invalid session. User not found for the session ID.")
-
-    user = User.query.filter_by(id=logged_in_user_id).first()
-    if not user:
-        abort(403, description="User not found.")
+    logged_in_user = get_user_by_session()
 
 
     # Delete the user
-    User.delete(logged_in_user_id)
+    User.delete(logged_in_user.id)
 
     return jsonify({"message": "User deleted successfully"})
 
@@ -478,15 +391,11 @@ def delete_user():
 @app.route('/users/<quiz_id>/result', methods=['GET'])
 def get_user_result(quiz_id):
     total_score = 0
-    session_id = session.get("session_id")
-    user_id = sessions.get(session_id)
+    user = get_user_by_session()
 
-    if not user_id:
-        return jsonify({"error": "User not authenticated"}), 403
+    user_quiz = UserQuiz.query.filter_by(user_id=user.id, quiz_id=quiz_id).first()
+    quiz = Quiz.qery.get(quiz_id)
 
-    user_quiz = UserQuiz.query.filter_by(user_id=user_id, quiz_id=quiz_id).first()
-    quiz = Quiz.query.get(quiz_id)
-    
     if not user_quiz:
         return jsonify({"error": "User has not taken the quiz"}), 404
 
