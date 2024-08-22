@@ -19,12 +19,13 @@ class User(BaseModel):
     __tablename__ = 'users'
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
-    first_name = db.Column(db.String(80), nullable=False)
-    last_name = db.Column(db.String(80), nullable=False)
+    firstName = db.Column(db.String(80), nullable=False)
+    lastName = db.Column(db.String(80), nullable=False)
+    bio = db.Column(db.String(1024), nullable=True)
 
     quizzes_created = db.relationship('Quiz', backref='creator', lazy=True)
 
-    quizzes_taken = db.relationship('UserQuiz', backref='user')
+    quizzes_taken = db.relationship('UserQuiz', backref='user', cascade="all, delete-orphan")
 
 
     def __init__(self, *args, **kwargs):
@@ -34,17 +35,15 @@ class User(BaseModel):
     def __setattr__(self, name, value):
         """sets a password with md5 encryption"""
         if name == "password":
+            print(f'before hash {value}')
             value = hash_password(value)
+            print(f'after hash {value}')
         super().__setattr__(name, value)
 
     def check_password(self, password):
         return verify_password(password, self.password)
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'email': self.email,
-            'first_name': self.first_name,
-            'last_name': self.last_name
-        }
 
+    def to_dict(self):
+       data =  super().to_dict()
+       return data

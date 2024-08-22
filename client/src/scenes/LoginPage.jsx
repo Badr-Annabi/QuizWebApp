@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const LoginPage = () => {
+    const [loginMessage, setLoginMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
@@ -40,9 +41,10 @@ const LoginPage = () => {
                 // Redirect to the page the user was trying to access
                 const from = location.state?.from?.pathname || '/';
                 navigate(from, { replace: true });
-            } else {
+            } else if (response.status === 401) {
                 console.error('Login failed:', result.error);
-            }
+                    setLoginMessage('User doesn\'t exist!');
+                }
         } catch (error) {
             console.error('An error occurred during login:', error);
         }
@@ -95,6 +97,7 @@ const LoginPage = () => {
                         Login
                     </button>
                 </form>
+                {loginMessage && <p className='mt-2 text-red-800'>{loginMessage}</p>}
                 <p className="text-center text-gray-600 dark:text-gray-400 mt-4">
                     Don't have an account?{' '}
                     <Link to="/register" className="text-blue-500 hover:underline">

@@ -38,6 +38,13 @@ const Navbar = () => {
         }
     };
 
+    const handleProfileClick = () => {
+        if (user && user.id) {
+            navigate(`/users/profile`);
+            setIsPopoverOpen(false);
+        }
+    };
+
     return (
         <nav className="bg-white dark:bg-gray-800 shadow-lg">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -60,13 +67,12 @@ const Navbar = () => {
                                 </button>
                                 {isPopoverOpen && (
                                     <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 z-20">
-                                        <Link
-                                            to="/profile"
-                                            className="block px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                            onClick={() => setIsPopoverOpen(false)}
+                                        <button
+                                            onClick={handleProfileClick}
+                                            className="block w-full text-left px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                                         >
                                             Profile
-                                        </Link>
+                                        </button>
                                         <button
                                             onClick={() => {
                                                 handleLogout();
@@ -135,12 +141,12 @@ const Navbar = () => {
                         </a>
                         {user ? (
                             <>
-                                <Link
-                                    to="/profile"
-                                    className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
+                                <button
+                                    onClick={handleProfileClick}
+                                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
                                 >
                                     Profile
-                                </Link>
+                                </button>
                                 <button
                                     onClick={handleLogout}
                                     className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"

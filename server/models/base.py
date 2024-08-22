@@ -16,11 +16,16 @@ class BaseModel(db.Model):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def create(cls, **kwargs):
-        instance = cls(**kwargs)
-        db.session.add(instance)
+    def create(cls, *args, **kwargs):
+        """ create instance in database and return it"""
+        instance = cls(*args, **kwargs)
+        instance.save()
+        return cls.get(instance.id)
+    
+    def save(self):
+        """Save the instance to the database."""
+        db.session.add(self)
         db.session.commit()
-        return instance
 
     @classmethod
     def get(cls, id):
@@ -35,20 +40,32 @@ class BaseModel(db.Model):
         instance = cls.query.get(id)
         if instance:
             for key, value in kwargs.items():
-                setattr(instance, key, value)
-            db.session.commit()
+                if key != 'id' and key != '__class__':
+                    if key in ['created_at', 'updated_at'] and isinstance(value, str):
+                        value = datetime.strptime(value, time)
+                    setattr(instance, key, value)
+                
+            try:
+                db.session.commit()
+            except Exception as e:
+                print(e)
+        instance = cls.query.get(id) # get the updated instance from database
         return instance
 
     @classmethod
     def delete(cls, id):
-        instance = cls.query.get(id)
-        if instance:
-            db.session.delete(instance)
-            db.session.commit()
+        try:
+            instance = cls.query.get(id)
+            if instance:
+                db.session.delete(instance)
+                db.session.commit()
+        except Exception as e:
+            print(e)
         return instance
 
     def to_dict(self):
         new_dict = self.__dict__.copy()
+        # print("Raw dict before processing:", new_dict)
         if "created_at" in new_dict:
             new_dict["created_at"] = new_dict["created_at"].strftime(time)
         if "updated_at" in new_dict:
@@ -56,5 +73,6 @@ class BaseModel(db.Model):
             new_dict["__class__"] = self.__class__.__name__
         if "_sa_instance_state" in new_dict:
             del new_dict["_sa_instance_state"]
+        # print("Processed dict:", new_dict)
         return new_dict
-#         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+

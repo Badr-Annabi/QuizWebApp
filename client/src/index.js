@@ -10,6 +10,7 @@ import RegisterPage from "./scenes/RegisterPage";
 import LoginPage from "./scenes/LoginPage";
 import PrivateRoute from "./components/PrivateRoute";
 import ResultPage from "./scenes/ResultsPage";
+import ProfilePage from "./scenes/ProfilePage";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -23,6 +24,11 @@ root.render(
             }/>
             <Route path="/login" element={<LoginPage/>} />
             <Route path="/register" element={<RegisterPage/>} />
+            <Route path="/users/profile" element={
+                <PrivateRoute accessible={false}>
+                    <ProfilePage/>
+                </PrivateRoute>
+            }/>
             <Route path="/about" element={<About/>} />
             <Route path="/quizzes/:quizId/submit" element={
                 <PrivateRoute accessible={false}>

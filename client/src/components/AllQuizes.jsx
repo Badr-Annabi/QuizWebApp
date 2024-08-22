@@ -34,7 +34,7 @@ const AllQuizes = () => {
             case 'easy':
                 return 'bg-green-200 dark:bg-green-700';
             case 'medium':
-                return 'bg-yellow-200 dark:bg-yellow-700';
+                return 'bg-yellow-200 dark:bg-yellow-500';
             case 'hard':
                 return 'bg-red-200 dark:bg-red-700';
             default:
@@ -55,20 +55,20 @@ const AllQuizes = () => {
             <div className='flex flex-col lg:flex-row justify-center'>
                 <div className='grid grid-cols-4 gap-4 p-6'>
                     {quizzes && quizzes.map((quiz, index) => (
-                        <div key={index} className={`bg-gray-200 dark:bg-indigo-200 rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105`}>
+                        <div key={index} className={`bg-gray-300 dark:bg-indigo-300 rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105`}>
                             {/* Image Cover */}
                             <img src={test_img} alt="Quiz Cover" className="w-full h-48 object-cover" />
                             <div className='p-4'>
                                 <p className='text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100'>
                                     Title: {quiz.title}
                                 </p>
-                                <p className='text-gray-700 dark:text-gray-300'>Description: {quiz.description}</p>
-                                <p className='text-gray-700 dark:text-gray-300'>Level: {quiz.level}</p>
+                                <p className='text-gray-700 dark:text-black'>Description: {quiz.description}</p>
+                                <p className={`${getBackgroundColor(quiz.level)} text-gray-700 dark:text-black `}>Level: {quiz.level}</p>
                                 
                                 {quiz.questions && quiz.questions.length > 0 && (
                                     <button
                                         onClick={() => handleTakeQuiz(quiz.id)}
-                                        className="mt-4 inline-block bg-blue-500 dark:bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 dark:hover:bg-blue-700 transition"
+                                        className="mt-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-3 px-8 rounded-full shadow-lg hover:bg-black transition"
                                     >
                                         Take Quiz
                                     </button>
