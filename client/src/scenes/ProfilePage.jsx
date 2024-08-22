@@ -2,41 +2,27 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../components/PrivateRoute";
 import Header from "../components/Header";
-<<<<<<< HEAD
-=======
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
->>>>>>> 9d38466f351466df3d35d416dd22c6644fff4daf
 
 const ProfilePage = () => {
     const { user, logout } = useAuth();
     const [editableUser, setEditableUser] = useState({ ...user });
-<<<<<<< HEAD
-=======
     const [currentTextPassword, setCurrentTextPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showCurrentPassword, setShowCurrentPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
->>>>>>> 9d38466f351466df3d35d416dd22c6644fff4daf
     const navigate = useNavigate();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setEditableUser({ ...editableUser, [name]: value });
-<<<<<<< HEAD
-        // console.log("edit:", editableUser);
-=======
->>>>>>> 9d38466f351466df3d35d416dd22c6644fff4daf
     };
 
     const handleSave = async () => {
         try {
             const { id, ...editedUser } = editableUser;
-<<<<<<< HEAD
-
-            console.log("Data of user without id:", editedUser);
-=======
             const {password, ...editedUserWtPwd} = editedUser;
 
 
@@ -47,18 +33,13 @@ const ProfilePage = () => {
             };
 
             console.log("Data of user without id and with passwords:", requestBody);
->>>>>>> 9d38466f351466df3d35d416dd22c6644fff4daf
             const response = await fetch(`http://127.0.0.1:5000/users/profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-<<<<<<< HEAD
-                body: JSON.stringify(editedUser),
-=======
                 body: JSON.stringify(requestBody),
->>>>>>> 9d38466f351466df3d35d416dd22c6644fff4daf
             });
 
             if (!response.ok) {
@@ -144,8 +125,6 @@ const ProfilePage = () => {
                                     className="mt-2 p-2 border rounded-lg w-full"
                                 />
                             </div>
-<<<<<<< HEAD
-=======
                             <div>
                                 <h2 className="text-2xl font-semibold text-gray-700 dark:text-gray-300">Current
                                     Password</h2>
@@ -212,7 +191,6 @@ const ProfilePage = () => {
                                 </div>
                             </div>
 
->>>>>>> 9d38466f351466df3d35d416dd22c6644fff4daf
                         </div>
                     </div>
 
