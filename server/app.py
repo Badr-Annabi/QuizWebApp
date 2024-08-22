@@ -427,7 +427,15 @@ def update_user():
         abort(403, description="User not found.")
 
     data = request.json
-    
+    if 'currentTextPassword' in data and 'newPassword' in data:
+         # Check if the current password is correct
+        if not user.check_password(data['currentTextPassword']):
+            return jsonify({'error': 'Invalid current password'}), 401
+        for key, value in data.items():
+            if key == 'newPassword':
+                # Update the password
+                user.password = value
+        
     updated_user = User.update(logged_in_user_id, **data)
 
     print(f'Updated Users password: {updated_user.password}')
@@ -459,77 +467,13 @@ def delete_user():
 
     return jsonify({"message": "User deleted successfully"})
 
-    # Check if user is authenticated
-    session_id = session.get("session_id")
-    if not session_id:
-        abort(403, description="Authentication required. No session ID found.")
-
-    # Get user associated with the session
-    logged_in_user_id = sessions.get(session_id)
-    if not logged_in_user_id:
-        abort(403, description="Invalid session. User not found for the session ID.")
-
-    user = User.query.filter_by(id=logged_in_user_id).first()
-    if not user:
-        abort(403, description="User not found.")
-
-    # Verify that the user can only update their own data
-    # if user.id != user_id:
-    #     abort(403, description="You are not authorized to update this user.")
-
-    data = request.json
-    # new_data = data.pop('id')
-    # print(f"New DAta: {new_data}")
-    # print(f'Data: {data}')
-    # print(f'User_id: {user_id}')
-    User.update(logged_in_user_id, **data)
-
-
-    return jsonify({"message": "User updated successfully", "user": user.to_dict()})
-
-<<<<<<< HEAD
+   
 #######################################################
 #                                                     #
 #                  OTHERS                             #
 #                                                     #
 #######################################################
 
-=======
-@app.route('/users/<user_id>', methods=['DELETE'])
-def delete_user(user_id):
-
-    # Check if user is authenticated
-    session_id = session.get("session_id")
-    print(f"Session ID retrieved in submit: {session_id}")
-    if not session_id:
-        abort(403, description="Authentication required. No session ID found.")
-
-    # Get user associated with the session
-    logged_in_user_id = sessions.get(session_id)
-    if not logged_in_user_id:
-        abort(403, description="Invalid session. User not found for the session ID.")
-
-    user = User.query.filter_by(id=logged_in_user_id).first()
-    if not user:
-        abort(403, description="User not found.")
-
-    # Verify that the user can only delete their own account
-    if user.id != user_id:
-        abort(403, description="You are not authorized to delete this user.")
-
-    # Delete the user
-    User.delete(user_id)
-
-    return jsonify({"message": "User deleted successfully"})
-
-
-#######################################################
-#                                                     #
-#                  OTHERS                             #
-#                                                     #
-#######################################################
-
->>>>>>> 9d38466f351466df3d35d416dd22c6644fff4daf
 # GET RESULTS OF LOGGED IN USER FOR A SPECIFIC QUIZ BY quiz_id
 @app.route('/users/<quiz_id>/result', methods=['GET'])
 def get_user_result(quiz_id):
