@@ -11,11 +11,12 @@ const ProfilePage = () => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setEditableUser({ ...editableUser, [name]: value });
+        // console.log("edit:", editableUser);
     };
 
     const handleSave = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:5000/users/${user.id}`, {
+            const response = await fetch(`http://127.0.0.1:5000/users/profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -31,7 +32,7 @@ const ProfilePage = () => {
 
             const data = await response.json();
             alert('User information updated successfully');
-            console.log('Updated user:', data.user);
+            console.log('Updated user:', data);
 
             // Optionally, update the user context with the new user data
             // e.g., updateUserContext(data.user);
@@ -44,7 +45,7 @@ const ProfilePage = () => {
 
     const handleDeleteUser = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:5000/users/${user.id}`, {
+            const response = await fetch(`http://127.0.0.1:5000/users/profile`, {
                 method: 'DELETE',
                 credentials: 'include',
             });
