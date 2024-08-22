@@ -410,7 +410,7 @@ def delete_quiz(quiz_id):
 #######################################################
 @app.route('/users/profile', methods=['PUT'])
 def update_user():
-
+    
 
     # Check if user is authenticated
     session_id = session.get("session_id")
@@ -431,12 +431,12 @@ def update_user():
     #     abort(403, description="You are not authorized to update this user.")
 
     data = request.json
-
     # new_data = data.pop('id')
     # print(f"New DAta: {new_data}")
-    print(f'Data: {data}')
+    # print(f'Data: {data}')
     # print(f'User_id: {user_id}')
     User.update(logged_in_user_id, **data)
+
 
     return jsonify({"message": "User updated successfully", "user": user.to_dict()})
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REDIS_PORT=6380
+REDIS_PORT=6378
 
 # Function to check if Redis is running
 check_redis() {
