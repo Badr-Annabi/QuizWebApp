@@ -38,9 +38,12 @@ class BaseModel(db.Model):
     @classmethod
     def update(cls, id, **kwargs):
         instance = cls.query.get(id)
+        print(f"instance: {instance.to_dict()}")
         if instance:
             for key, value in kwargs.items():
-                if key != 'id':
+
+                if key != 'id' and key != '__class__' and key != 'users_id':
+                    print("not id")
                     setattr(instance, key, value)
             try:
                 db.session.commit()
