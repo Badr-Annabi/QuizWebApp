@@ -46,13 +46,14 @@ const ProfilePage = () => {
             if (response.status === 401) {
                 // const errorData = await response.json();
                 // throw new Error(errorData.error || 'Failed to update user information');
-                setIncorrectPassword('Incorrect password')
-
+                setIncorrectPassword('Incorrect password');
             } else {
 
                 const data = await response.json();
                 alert('User information updated successfully');
                 console.log('Updated user:', data);
+                setIncorrectPassword('');
+                window.location.href = '/';
             }
 
         } catch (error) {
@@ -171,7 +172,7 @@ const ProfilePage = () => {
                                         {showNewPassword ? <EyeSlashIcon className="w-5 h-5"/> :
                                             <EyeIcon className="w-5 h-5"/>}
                                     </button>
-                                    
+
                                 </div>
                             </div>
 

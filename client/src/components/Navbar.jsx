@@ -45,6 +45,14 @@ const Navbar = () => {
         }
     };
 
+    const handleQuizzesClick = () => {
+        navigate('/createdquizzes');
+    };
+
+    const handleSubmittedQuizzesClick = () => {
+        navigate('/submittedQuizzes');
+    };
+
     return (
         <nav className="bg-white dark:bg-gray-800 shadow-lg">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -66,12 +74,25 @@ const Navbar = () => {
                                     <FaUserCircle size={24} />
                                 </button>
                                 {isPopoverOpen && (
-                                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 z-20">
+                                    <div
+                                        className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 z-20">
                                         <button
                                             onClick={handleProfileClick}
                                             className="block w-full text-left px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                                         >
                                             Profile
+                                        </button>
+                                        <button
+                                            onClick={handleQuizzesClick}
+                                            className="block w-full text-left px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                        >
+                                            My Quizzes
+                                        </button>
+                                        <button
+                                            onClick={handleSubmittedQuizzesClick}
+                                            className="block w-full text-left px-4 py-2 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                        >
+                                            Submitted Quizzes
                                         </button>
                                         <button
                                             onClick={() => {
@@ -89,13 +110,13 @@ const Navbar = () => {
                             <>
                                 <Link
                                     to="/login"
-                                    className="border-gray-900 dark:border-white border-2 rounded-md hover:rounded-xl hover:bg-amber-50 transition-all duration-300 ease-in-out p-2 ml-auto"
+                                    className="border-gray-900 dark:border-white border-2 rounded-md hover:rounded-xl hover:bg-amber-50 dark:hover:text-gray-700 transition-all duration-300 ease-in-out p-2 ml-auto"
                                 >
                                     Login
                                 </Link>
                                 <Link
                                     to="/register"
-                                    className="border-gray-900 dark:border-white border-2 rounded-md hover:rounded-xl hover:bg-amber-50 transition-all duration-300 ease-in-out p-2"
+                                    className="border-gray-900 dark:border-white border-2 rounded-md hover:rounded-xl hover:bg-amber-50 dark:hover:text-gray-700 transition-all duration-300 ease-in-out p-2"
                                 >
                                     Sign Up
                                 </Link>
