@@ -17,7 +17,9 @@ check_redis() {
 # Function to start Redis if it's not running
 start_redis() {
     if check_redis; then
-        echo "Redis is already running on port $REDIS_PORT."
+        # echo "Redis is already running on port $REDIS_PORT."
+        sudo kill $PID
+
     else
         echo "Port $REDIS_PORT is not in use. Starting Redis..."
 

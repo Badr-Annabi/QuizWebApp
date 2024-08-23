@@ -148,6 +148,7 @@ def create_quiz():
     
     if not creator:
         return jsonify({'error': 'Creator not found'}), 404
+
     new_quiz = Quiz.create(**data)
 
     # print(new_quiz.to_dict())
@@ -243,6 +244,8 @@ def submit_quiz(quiz_id):
 
     total_score = 0
     quiz = Quiz.get(quiz_id)
+    if not quiz:
+        return jsonify({'error': 'Quiz not found'}), 404
     # questions = quiz.questions
 
     for answer in answers:
@@ -252,6 +255,8 @@ def submit_quiz(quiz_id):
         question = Question.get(answer.get('questionId'))
         print(question)
         correct_answer = question.get_correct_answer().text
+        if not correct_answer:
+            abort(403, description="No correct answer had been setted")
         if user_answer == correct_answer:
             total_score += 1
     user_quiz = UserQuiz.query.filter_by(user_id=user.id, quiz_id=quiz_id).first()
@@ -293,7 +298,6 @@ def delete_quiz(quiz_id):
     # Check if user is authenticated
     user = get_user_by_session()
     
-
     # Verify that the user can only update their own quiz
     quiz_gotten = Quiz.get(quiz_id)
     if not quiz_gotten:
@@ -394,7 +398,9 @@ def get_user_result(quiz_id):
     user = get_user_by_session()
 
     user_quiz = UserQuiz.query.filter_by(user_id=user.id, quiz_id=quiz_id).first()
-    quiz = Quiz.qery.get(quiz_id)
+    quiz = Quiz.query.get(quiz_id)
+    if not quiz:
+        return jsonify({'error': 'Quiz not found'}), 404
 
     if not user_quiz:
         return jsonify({"error": "User has not taken the quiz"}), 404

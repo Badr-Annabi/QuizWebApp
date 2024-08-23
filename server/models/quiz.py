@@ -21,16 +21,12 @@ class Quiz(BaseModel):
         if instance and 'questions_data' in kwargs:
             questions_data = kwargs['questions_data']
             for q_data in questions_data:
-                question = Question(text=q_data['question'])
-                instance.questions.append(question)
-                answers_data = q_data['answers']
-                # correct_answer = q_data['isCorrect']
-                for a_data in answers_data:
-                    answer = Answer(**a_data)
-                    # answer.is_correct = a_data['isCorrect']
-                    question.answers.append(answer)
+                print(q_data)
+                Question.create(quiz_id=instance.id, **q_data)
+        
         instance.save()
-        return Quiz.get(instance.id)
+        return cls.get(instance.id)
+
         
     @classmethod
     def update(cls, id, **kwargs):
