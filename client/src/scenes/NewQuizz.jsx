@@ -15,7 +15,7 @@ const NewQuizz = () => {
 
     const handleQuestionChange = (index, value) => {
         const newQuestions = [...questions];
-        newQuestions[index].question = value;
+        newQuestions[index].text = value;
         setQuestions(newQuestions);
     };
 
@@ -46,7 +46,7 @@ const NewQuizz = () => {
     };
 
     const addQuestion = () => {
-        setQuestions([...questions, { question: '', answers: [{ text: '', isCorrect: false }] }]);
+        setQuestions([...questions, { text: '', answers: [{ text: '', isCorrect: false }] }]);
     };
 
     const removeQuestion = (index) => {
@@ -70,8 +70,8 @@ const NewQuizz = () => {
             title,
             description,
             level,
-            questions_data: questions.map((q) => ({
-                question: q.question,
+            questions: questions.map((q) => ({
+                text: q.text,
                 answers: q.answers,
             })),
         };
@@ -187,7 +187,7 @@ const NewQuizz = () => {
                                 <input
                                     type="text"
                                     id={`question-${qIndex}`}
-                                    value={q.question}
+                                    value={q.text}
                                     onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
                                     className="text-gray-900 w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     placeholder="Enter your question"
