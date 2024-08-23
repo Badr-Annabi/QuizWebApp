@@ -7,3 +7,10 @@ class Answer(BaseModel):
     isCorrect = db.Column(db.Boolean, nullable=False)
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), nullable=False)
     # user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+
+    @classmethod
+    def create(cls, *args, **kwargs):
+        """Create an Answer instance."""
+        instance = cls(*args, **kwargs)
+        instance.save()
+        return cls.get(instance.id)
