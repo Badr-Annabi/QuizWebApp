@@ -14,14 +14,12 @@ const SubmittedQuizzes = () => {
     useEffect(() => {
         const fetchQuizzes = async () => {
             try {
-                // Fetch all quizzes
-                const response = await fetch('http://127.0.0.1:5000/submitted-quizzes');
+                const response = await fetch('http://127.0.0.1:5000/quizzes/submitted');
                 const data = await response.json();
                 setQuizzes(data);
                 setFilteredQuizzes(data);
 
-                // Fetch total quizzes for progress calculation
-                const totalResponse = await fetch('http://127.0.0.1:5000/total-quizzes');
+                const totalResponse = await fetch('http://127.0.0.1:5000/quizzes');
                 const totalData = await totalResponse.json();
                 setTotalQuizzes(totalData.total);
                 setSubmittedQuizzes(data.length);
@@ -35,7 +33,7 @@ const SubmittedQuizzes = () => {
     }, []);
 
     useEffect(() => {
-        // Filter quizzes based on level and date
+
         let filtered = quizzes;
 
         if (filterLevel !== 'all') {

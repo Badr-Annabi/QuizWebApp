@@ -13,6 +13,7 @@ import ResultPage from "./scenes/ResultsPage";
 import ProfilePage from "./scenes/ProfilePage";
 import CreatedQuizzesPage from "./scenes/CreatedQuizzesPage";
 import SubmittedQuizzes from "./scenes/SubmittedQuizzes";
+import EditQuiz from "./scenes/EditQuizPage";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -53,6 +54,11 @@ root.render(
                     <NewQuizz/>
                 </PrivateRoute>
                 }/>
+            <Route path="/edit-quiz/:quizId" element={
+                <PrivateRoute accessible={false}>
+                    <EditQuiz/>
+                </PrivateRoute>
+            }/>
         </Routes>
     </Router>
   </React.StrictMode>
