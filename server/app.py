@@ -13,7 +13,7 @@ from models.question import Question
 from models.user import User
 from models.answer import Answer
 
-
+time = '%Y-%m-%d %H:%M:%S'
 #######################################################
 #                                                     #
 #            Methods definition                       #
@@ -187,10 +187,12 @@ def get_submitted_quizzes_by_user():
 
     # Query UserQuiz to get all quizzes submitted by the user
     submitted_quizzes_data = UserQuiz.query.filter_by(user_id=user.id).all()
+    if not submitted_quizzes_data:
+        return jsonify({'message': 'No quizzes found for this user'}), 404
+
     quiz_ids = [user_quiz.quiz_id for user_quiz in submitted_quizzes_data]
 
-    if not quiz_ids:
-        return jsonify({'message': 'No quizzes found for this user'}), 404
+
 
     # Query quizzes with eager loading for questions and answers
     quizzes_data = Quiz.query.options(
@@ -198,9 +200,21 @@ def get_submitted_quizzes_by_user():
     ).filter(Quiz.id.in_(quiz_ids)).all()
 
     # Convert quizzes to a dictionary format
-    quizzes = [quiz.to_dict() for quiz in quizzes_data]
+    # quizzes = [quiz.to_dict() for quiz in quizzes_data]
 
-    return jsonify(quizzes)
+    result = []
+    for quiz in quizzes_data:
+        relevant_submissions = [uq for uq in submitted_quizzes_data if uq.quiz_id == quiz.id]
+        if relevant_submissions:
+            user_quiz = max(relevant_submissions, key=lambda uq: uq.date_taken)
+            quiz_data = quiz.to_dict()
+            quiz_data['raw_score'] = user_quiz.raw_score
+            quiz_data['date_taken'] = user_quiz.date_taken.strftime(time)
+            result.append(quiz_data)
+
+    return jsonify(result)
+
+    # return jsonify(quizzes)
 
 
 @app.route('/quizzes/<quiz_id>', methods=['GET'])

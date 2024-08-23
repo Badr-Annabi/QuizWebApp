@@ -14,16 +14,24 @@ const SubmittedQuizzes = () => {
     useEffect(() => {
         const fetchQuizzes = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:5000/quizzes/submitted');
+                const response = await fetch('http://127.0.0.1:5000/quizzes/submitted', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include'
+                });
                 const data = await response.json();
+                console.log("Submited Quizzes:", data);
                 setQuizzes(data);
                 setFilteredQuizzes(data);
 
                 const totalResponse = await fetch('http://127.0.0.1:5000/quizzes');
                 const totalData = await totalResponse.json();
-                setTotalQuizzes(totalData.total);
+                console.log("totalData Quizzes:", totalData);
+                setTotalQuizzes(totalData.length);
                 setSubmittedQuizzes(data.length);
-                setPercentage(Math.round((data.length / totalData.total) * 100));
+                setPercentage(Math.round((data.length / totalData.length) * 100));
             } catch (error) {
                 console.error('Error fetching quizzes:', error);
             }
@@ -42,9 +50,9 @@ const SubmittedQuizzes = () => {
 
         filtered.sort((a, b) => {
             if (filterDate === 'asc') {
-                return new Date(a.date) - new Date(b.date);
+                return new Date(a.date_taken) - new Date(b.date_taken);
             } else {
-                return new Date(b.date) - new Date(a.date);
+                return new Date(b.date_taken) - new Date(a.date_taken);
             }
         });
 
@@ -102,8 +110,8 @@ const SubmittedQuizzes = () => {
                         <tr key={quiz.id} className="border-b dark:border-gray-600">
                             <td className="p-4 text-gray-900 dark:text-gray-100">{quiz.title}</td>
                             <td className="p-4 text-gray-900 dark:text-gray-100">{quiz.description}</td>
-                            <td className="p-4 text-gray-900 dark:text-gray-100">{quiz.score}</td>
-                            <td className="p-4 text-gray-900 dark:text-gray-100">{new Date(quiz.date).toLocaleDateString()}</td>
+                            <td className="p-4 text-gray-900 dark:text-gray-100">{quiz.raw_score}</td>
+                            <td className="p-4 text-gray-900 dark:text-gray-100">{new Date(quiz.date_taken).toLocaleString()}</td>
                         </tr>
                     ))}
                     </tbody>

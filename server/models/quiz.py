@@ -17,9 +17,9 @@ class Quiz(BaseModel):
     @classmethod
     def create(cls, *args, **kwargs):
         """Quiz create method"""
-        instance = super().create(**{k: v for k, v in kwargs.items() if k != 'questions_data'})
-        if instance and 'questions_data' in kwargs:
-            questions_data = kwargs['questions_data']
+        instance = super().create(**{k: v for k, v in kwargs.items() if k != 'questions'})
+        if instance and 'questions' in kwargs:
+            questions_data = kwargs['questions']
             for q_data in questions_data:
                 print(q_data)
                 Question.create(quiz_id=instance.id, **q_data)
@@ -30,17 +30,17 @@ class Quiz(BaseModel):
         
     @classmethod
     def update(cls, id, **kwargs):
-        instance = super().update(id, **{k: v for k, v in kwargs.items() if k != 'questions_data' and k != 'creator_id'})
+        instance = super().update(id, **{k: v for k, v in kwargs.items() if k != 'questions' and k != 'creator_id'})
         
-        if instance and 'questions_data' in kwargs:
-            questions_data = kwargs['questions_data']
+        if instance and 'questions' in kwargs:
+            questions_data = kwargs['questions']
 
             # Clear existing questions and answers
             instance.questions.clear()
 
             # Add the new set of questions and answers
             for q_data in questions_data:
-                question = Question(text=q_data['question'])
+                question = Question(text=q_data['text'])
                 instance.questions.append(question)
 
                 answers_data = q_data['answers']

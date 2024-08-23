@@ -29,6 +29,7 @@ const ProgressCircle = ({ percentage, size = 100, strokeWidth = 10 }) => {
                     strokeDasharray={circumference}
                     strokeDashoffset={strokeDashoffset}
                     fill="none"
+                    transform={`rotate(-90 ${size / 2} ${size / 2})`}
                     className="transition-transform duration-500"
                 />
                 <text
