@@ -13,7 +13,7 @@ from models.question import Question
 from models.user import User
 from models.answer import Answer
 
-
+time = '%Y-%m-%d %H:%M:%S'
 #######################################################
 #                                                     #
 #            Methods definition                       #
@@ -144,7 +144,7 @@ def create_quiz():
     data = request.get_json()
     data['creator_id'] = user.id
     # print(f"data:{data}")
-    creator = db.session.get(User, user.id)
+    creator = User.get(user.id)
     
     if not creator:
         return jsonify({'error': 'Creator not found'}), 404
@@ -187,10 +187,12 @@ def get_submitted_quizzes_by_user():
 
     # Query UserQuiz to get all quizzes submitted by the user
     submitted_quizzes_data = UserQuiz.query.filter_by(user_id=user.id).all()
+    if not submitted_quizzes_data:
+        return jsonify({'message': 'No quizzes found for this user'}), 404
+    
     quiz_ids = [user_quiz.quiz_id for user_quiz in submitted_quizzes_data]
 
-    if not quiz_ids:
-        return jsonify({'message': 'No quizzes found for this user'}), 404
+    
 
     # Query quizzes with eager loading for questions and answers
     quizzes_data = Quiz.query.options(
@@ -198,9 +200,21 @@ def get_submitted_quizzes_by_user():
     ).filter(Quiz.id.in_(quiz_ids)).all()
 
     # Convert quizzes to a dictionary format
-    quizzes = [quiz.to_dict() for quiz in quizzes_data]
+    # quizzes = [quiz.to_dict() for quiz in quizzes_data]
 
-    return jsonify(quizzes)
+    result = []
+    for quiz in quizzes_data:
+        relevant_submissions = [uq for uq in submitted_quizzes_data if uq.quiz_id == quiz.id]
+        if relevant_submissions:
+            user_quiz = max(relevant_submissions, key=lambda uq: uq.date_taken)
+            quiz_data = quiz.to_dict()
+            quiz_data['raw_score'] = user_quiz.raw_score
+            quiz_data['date_taken'] = user_quiz.date_taken.strftime(time)
+            result.append(quiz_data)
+
+    return jsonify(result)
+
+    # return jsonify(quizzes)
 
 
 @app.route('/quizzes/<quiz_id>', methods=['GET'])
@@ -309,39 +323,6 @@ def delete_quiz(quiz_id):
     return jsonify({'message': 'Quiz deleted successfully'}), 200
 
 
-#######################################################
-#                                                     #
-#                   CRUD ANSWER                       #
-#                                                     #
-#######################################################
-
-# @app.route('/answers', methods=['POST'])
-# def submit_answer():
-#     from models.user import User
-#     from models.question import Question
-#     from models.answer import Answer
-
-#     if 'user_id' not in session:
-#         return jsonify({'error': 'Unauthorized'}), 401
-
-#     data = request.get_json()
-#     user_id = data.get('user_id')
-#     question_id = data.get('question_id')
-#     text = data.get('text')
-#     is_correct = data.get('is_correct')
-
-#     user = db.session.get(user_id)
-#     question = Question.query.get(question_id)
-#     if not user or not question:
-#         return jsonify({'error': 'User or Question not found'}), 404
-
-#     answer = Answer(text=text, is_correct=is_correct, question_id=question_id, user_id=user_id)
-#     db.session.add(answer)
-#     db.session.commit()
-
-#     return jsonify(answer.to_dict()), 201
-
-
 
 #######################################################
 #                                                     #
@@ -398,7 +379,7 @@ def get_user_result(quiz_id):
     user = get_user_by_session()
 
     user_quiz = UserQuiz.query.filter_by(user_id=user.id, quiz_id=quiz_id).first()
-    quiz = Quiz.query.get(quiz_id)
+    quiz = Quiz.get(quiz_id)
     if not quiz:
         return jsonify({'error': 'Quiz not found'}), 404
 

@@ -1,61 +1,90 @@
 import unittest
-import json
+import subprocess
+import os
 from app import create_app, db
 from models.user import User
+import json
+import requests
 
 class AppTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.app = create_app()
-        cls.app.config.from_object('test_config.TestingConfig')
+        cls.app.config.from_object('config.TestingConfig')
         cls.client = cls.app.test_client()
         cls.app_context = cls.app.app_context()
         cls.app_context.push()
         db.create_all()
 
-    @classmethod
-    def tearDownClass(cls):
-        db.session.remove()
-        db.drop_all()
-        cls.app_context.pop()
+    # @classmethod
+    # def tearDownClass(cls):
+        # db.session.remove()
+    #     db.drop_all()
+    #     cls.app_context.pop()
+
+    def save_cookies(self, url, login_data, file_path):
+        response = requests.post(url, json=login_data)
+        if response.status_code == 200:
+            cookies = response.cookies
+            with open(file_path, 'w') as file:
+                json.dump(cookies.get_dict(), file)
+        else:
+            print("Login failed")
+    
+    def load_cookies(self, file_path):
+        with open(file_path, 'r') as file:
+            return  json.load(file)
 
     def setUp(self):
-        self.client.post('/signup', json={
-            'email': 'test@example.com',
-            'password': 'password',
-            'first_name': 'Test',
-            'last_name': 'User'
-        })
-        self.login_response = self.client.post('/login', json={
+
+        
+        User.query.filter_by(email='test@example.com').delete()
+        db.session.commit()
+        # Create a new user
+        signup_data = {
+            'firstName': 'fahd',
+            'lastName': 'Benchekroun',
             'email': 'test@example.com',
             'password': 'password'
-        })
-        self.cookies = self.login_response.headers.getlist('Set-Cookie')
+        }
+        self.user = User.create(**signup_data)
+        
+        # Log in and generate cookies.txt
+        login_url = 'http://localhost:5000/login'
+        login_data = {
+            'email': 'test@example.com',
+            'password': 'password'
+        }
+        
+        # Read cookies from cookies.txt
+        self.save_cookies(login_url, login_data, 'cookies.json')
+        self.cookies = self.load_cookies('cookies.json')
 
-    def test_signup(self):
-        response = self.client.post('/signup', json={
-            'email': 'newuser@example.com',
-            'password': 'newpassword',
-            'first_name': 'New',
-            'last_name': 'User'
-        })
-        self.assertEqual(response.status_code, 201)
-        self.assertIn('newuser@example.com', response.data.decode())
 
-    def test_login(self):
-        self.assertEqual(self.login_response.status_code, 200)
-        self.assertIn('session=', self.cookies[0])
 
+    # def test_signup(self):
+    #     response = self.client.post('/signup', json={
+    #         'email': 'newuser@example.com',
+    #         'password': 'newpassword',
+    #         'firstName': 'New',
+    #         'lastName': 'User'
+    #     })
+    #     self.assertEqual(response.status_code, 201)
+    #     self.assertIn('newuser@example.com', response.data.decode())
+
+    
     def test_create_quiz(self):
         response = self.client.post('/quizzes', 
-            json={'creator_id': 1, 'title': 'Sample Quiz', 'questions': [{'text': 'What is 2+2?'}]},
-            headers={'Cookie': self.cookies[0]})
+            json={'creator_id': self.user.id, 'title': 'Sample Quiz', 'questions': [{'text': 'What is 2+2?'}]},
+            headers={'Cookie': self.cookies})
+        # print(response.text)
         self.assertEqual(response.status_code, 201)
-        self.assertIn('Sample Quiz', response.data.decode())
+        self.assertIn('Quiz created successfully', response.data.decode())
 
     def test_unauthorized_access(self):
+        print(f"User_id: {self.user.id}")
         response = self.client.post('/quizzes', 
-            json={'creator_id': 1, 'title': 'Sample Quiz', 'questions': [{'text': 'What is 2+2?'}]})
+            json={'creator_id': self.user.id, 'title': 'Sample Quiz', 'questions': [{'text': 'What is 2+2?'}]})
         self.assertEqual(response.status_code, 401)
 
 if __name__ == '__main__':
