@@ -67,7 +67,8 @@ const ContactPage = () => {
 
                     {/* Contact Info */}
                     <div className="w-full lg:w-1/3 text-center" data-aos="fade-left">
-                        <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Contact Information</h2>
+                        <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Contact
+                            Information</h2>
                         <p className="text-gray-700 dark:text-gray-300 mb-4">
                             Feel free to reach out to us through any of the following channels.
                         </p>
@@ -84,18 +85,41 @@ const ContactPage = () => {
                         </ul>
 
                         {/* Social Media Icons */}
-                        <div className="flex flex-col md:flex-row space-y-8 md:space-y-0 md:space-x-12 text-center md:text-left">
+                        <div
+                            className="flex flex-col md:flex-row space-y-8 md:space-y-0 md:space-x-12 text-center md:text-left">
                             {/* Badr Annabi's Social Media */}
                             <div>
-                                <h3 className="text-white font-semibold mb-2">Badr Annabi</h3>
+                                <h3 className="text-black dark:text-white font-semibold mb-2">Badr Annabi</h3>
                                 <div className="flex justify-center md:justify-start space-x-4">
-                                    <a href="https://github.com/Badr-Annabi" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+                                    <a href="https://github.com/Badr-Annabi" target="_blank" rel="noopener noreferrer"
+                                       className="text-gray-400 hover:text-white">
                                         <FaGithub className="w-6 h-6"/>
                                     </a>
-                                    <a href="https://www.linkedin.com/in/badr-annabi/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+                                    <a href="https://www.linkedin.com/in/badr-annabi/" target="_blank"
+                                       rel="noopener noreferrer" className="text-gray-400 hover:text-white">
                                         <FaLinkedin className="w-6 h-6"/>
                                     </a>
-                                    <a href="https://x.com/annabi_badr" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+                                    <a href="https://x.com/annabi_badr" target="_blank" rel="noopener noreferrer"
+                                       className="text-gray-400 hover:text-white">
+                                        <FaTwitter className="w-6 h-6"/>
+                                    </a>
+                                </div>
+                            </div>
+
+                            {/* Oumaima Naanaa's Social Media */}
+                            <div>
+                                <h3 className="text-black dark:text-white mx-auto font-semibold mb-2">Oumaima Naanaa</h3>
+                                <div className="flex justify-center md:justify-start space-x-4">
+                                    <a href="https://github.com/naanaa59" target="_blank" rel="noopener noreferrer"
+                                       className="text-gray-400 hover:text-white">
+                                        <FaGithub className="w-6 h-6"/>
+                                    </a>
+                                    <a href="https://www.linkedin.com/in/oumaima-naanaa/" target="_blank"
+                                       rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+                                        <FaLinkedin className="w-6 h-6"/>
+                                    </a>
+                                    <a href="https://x.com/naanaa_oumaima" target="_blank" rel="noopener noreferrer"
+                                       className="text-gray-400 hover:text-white">
                                         <FaTwitter className="w-6 h-6"/>
                                     </a>
                                 </div>

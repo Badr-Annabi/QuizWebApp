@@ -95,6 +95,15 @@ const EditQuiz = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        for (let i = 0; i < questions.length; i ++) {
+            const question = questions[i];
+            const hasCorrectAnswer = question.answers.some(answer => answer.isCorrect);
+
+            if (!hasCorrectAnswer) {
+                alert(`Please set a correct answer for Question ${i + 1}`);
+                return;
+            }
+        }
         const updatedQuizData = {
             title,
             description,
@@ -116,6 +125,7 @@ const EditQuiz = () => {
             });
 
             if (response.ok) {
+                console.log("response for updated quiz: ",response);
                 console.log('Quiz updated successfully');
                 navigate('/');
             } else {
