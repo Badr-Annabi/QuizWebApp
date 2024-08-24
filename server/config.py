@@ -13,6 +13,8 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = "sqlite:///test_db.db"
+
+# Config in case we use mysql
 # class DevelopmentConfig(Config):
 #     SQLALCHEMY_DATABASE_URI = (
 #         f"mysql://{os.getenv('PROD_MYSQL_USER')}:{os.getenv('PROD_MYSQL_PWD')}@"

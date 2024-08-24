@@ -14,6 +14,7 @@ from models.user import User
 from models.answer import Answer
 
 time = '%Y-%m-%d %H:%M:%S'
+time = '%Y-%m-%d %H:%M:%S'
 #######################################################
 #                                                     #
 #            Methods definition                       #
@@ -23,7 +24,7 @@ time = '%Y-%m-%d %H:%M:%S'
 def _get_uid():
     """This function generates an uuid"""
     return str(uuid4())
-
+'%Y-%m-%d %H:%M:%S'
 def create_app():
     app = Flask(__name__)
 
@@ -102,10 +103,8 @@ def login():
     if not user or not user.check_password(password):
         return jsonify({'error': 'Invalid credentials'}), 401
     session_id = _get_uid()
-    # print("session_id: {}: #### user_id:{} ".format(session_id, user.id))
     sessions.set(session_id, str(user.id))
     session['session_id'] = session_id
-    # print(f"User ID set in session: {session.get('session_id')}")
     return jsonify({'message': 'Login successful'}), 200
 
 @app.route('/logout', methods=['POST'])
@@ -143,15 +142,12 @@ def create_quiz():
 
     data = request.get_json()
     data['creator_id'] = user.id
-    # print(f"data:{data}")
-    creator = db.session.get(User, user.id)
+    creator = User.get(user.id)
     
     if not creator:
         return jsonify({'error': 'Creator not found'}), 404
 
     new_quiz = Quiz.create(**data)
-
-    # print(new_quiz.to_dict())
     return jsonify({'message': 'Quiz created successfully'}), 201
 
 @app.route('/quizzes', methods=['GET'])
@@ -170,7 +166,6 @@ def get_created_quizzes_by_user():
 
     user = get_user_by_session()
     if not user:
-        # print(f"User ID not found for session ID: {session_id}")
         abort(403, description='Invalid session. User not found for the session ID.')
     
     quizzes_data = Quiz.query.options(joinedload(Quiz.questions).
@@ -190,17 +185,18 @@ def get_submitted_quizzes_by_user():
     if not submitted_quizzes_data:
         return jsonify({'message': 'No quizzes found for this user'}), 404
 
+    if not submitted_quizzes_data:
+        return jsonify({'message': 'No quizzes found for this user'}), 404
+    
     quiz_ids = [user_quiz.quiz_id for user_quiz in submitted_quizzes_data]
 
 
+    
 
     # Query quizzes with eager loading for questions and answers
     quizzes_data = Quiz.query.options(
         joinedload(Quiz.questions).joinedload(Question.answers)
     ).filter(Quiz.id.in_(quiz_ids)).all()
-
-    # Convert quizzes to a dictionary format
-    # quizzes = [quiz.to_dict() for quiz in quizzes_data]
 
     result = []
     for quiz in quizzes_data:
@@ -214,15 +210,12 @@ def get_submitted_quizzes_by_user():
 
     return jsonify(result)
 
-    # return jsonify(quizzes)
-
 
 @app.route('/quizzes/<quiz_id>', methods=['GET'])
 def get_quiz(quiz_id):
 
     user = get_user_by_session()
         
-    # print(quiz_id)
     quiz = Quiz.get(quiz_id)
     if not quiz:
         return jsonify({'error': 'Quiz not found'}), 404
@@ -260,11 +253,10 @@ def submit_quiz(quiz_id):
     quiz = Quiz.get(quiz_id)
     if not quiz:
         return jsonify({'error': 'Quiz not found'}), 404
-    # questions = quiz.questions
 
     for answer in answers:
         user_answer = answer.get('selectedOption')
-        # print(answer)
+
         print(answer.get('questionId'))
         question = Question.get(answer.get('questionId'))
         print(question)
@@ -297,8 +289,6 @@ def update_quiz(quiz_id):
 
     # Verify that the user can only update their own quiz
     quiz_gotten = Quiz.get(quiz_id)
-    # print(f'user id {user.id}')
-    # print(f'quiz creator id {quiz_gotten.creator_id}')
     if user.id != quiz_gotten.creator_id:
         abort(403, description="You are not authorized to update this quiz.")
     
@@ -321,41 +311,6 @@ def delete_quiz(quiz_id):
     quiz = Quiz.delete(quiz_id)
 
     return jsonify({'message': 'Quiz deleted successfully'}), 200
-
-
-#######################################################
-#                                                     #
-#                   CRUD ANSWER                       #
-#                                                     #
-#######################################################
-
-# @app.route('/answers', methods=['POST'])
-# def submit_answer():
-#     from models.user import User
-#     from models.question import Question
-#     from models.answer import Answer
-
-#     if 'user_id' not in session:
-#         return jsonify({'error': 'Unauthorized'}), 401
-
-#     data = request.get_json()
-#     user_id = data.get('user_id')
-#     question_id = data.get('question_id')
-#     text = data.get('text')
-#     is_correct = data.get('is_correct')
-
-#     user = db.session.get(user_id)
-#     question = Question.query.get(question_id)
-#     if not user or not question:
-#         return jsonify({'error': 'User or Question not found'}), 404
-
-#     answer = Answer(text=text, is_correct=is_correct, question_id=question_id, user_id=user_id)
-#     db.session.add(answer)
-#     db.session.commit()
-
-#     return jsonify(answer.to_dict()), 201
-
-
 
 #######################################################
 #                                                     #
@@ -380,10 +335,7 @@ def update_user():
                 user.password = value
         
     updated_user = User.update(user.id, **data)
-
-    # print(f'Updated Users password: {updated_user.password}')
-
-
+    
     return jsonify({"message": "User updated successfully", "user": user.to_dict()})
 
 @app.route('/users/profile', methods=['DELETE'])
@@ -395,6 +347,9 @@ def delete_user():
 
     # Delete the user
     User.delete(logged_in_user.id)
+
+    if User.get(logged_in_user.id):
+        print("User still here")
 
     return jsonify({"message": "User deleted successfully"})
 
@@ -412,7 +367,7 @@ def get_user_result(quiz_id):
     user = get_user_by_session()
 
     user_quiz = UserQuiz.query.filter_by(user_id=user.id, quiz_id=quiz_id).first()
-    quiz = Quiz.query.get(quiz_id)
+    quiz = Quiz.get(quiz_id)
     if not quiz:
         return jsonify({'error': 'Quiz not found'}), 404
 
