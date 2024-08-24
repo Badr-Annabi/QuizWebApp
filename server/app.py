@@ -23,7 +23,7 @@ time = '%Y-%m-%d %H:%M:%S'
 def _get_uid():
     """This function generates an uuid"""
     return str(uuid4())
-
+'%Y-%m-%d %H:%M:%S'
 def create_app():
     app = Flask(__name__)
 
@@ -362,6 +362,9 @@ def delete_user():
 
     # Delete the user
     User.delete(logged_in_user.id)
+
+    if User.get(logged_in_user.id):
+        print("User still here")
 
     return jsonify({"message": "User deleted successfully"})
 
