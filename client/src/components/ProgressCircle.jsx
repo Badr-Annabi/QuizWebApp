@@ -1,12 +1,13 @@
 import React from 'react';
 
 const ProgressCircle = ({ percentage, size = 100, strokeWidth = 10 }) => {
+    const validPercentage = isNaN(percentage) || percentage < 0 ? 0 : percentage;
     const radius = (size - strokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
     return (
-        <div className="relative flex items-center justify-center">
+        <div className="relative flex items-center justify-center rounded-b-2xl rounded-tl-2xl  font-bold text-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4">
             <svg
                 width={size}
                 height={size}
@@ -37,9 +38,8 @@ const ProgressCircle = ({ percentage, size = 100, strokeWidth = 10 }) => {
                     y="50%"
                     textAnchor="middle"
                     dy=".3em"
-                    className="text-gray-900 dark:text-gray-100 font-bold text-lg"
                 >
-                    {percentage}%
+                    {validPercentage}%
                 </text>
             </svg>
         </div>

@@ -14,6 +14,7 @@ const ProfilePage = () => {
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [incorrectPassword, setIncorrectPassword] = useState('');
+    const [incorrectNewPassword, setIncorrectNewPassword] = useState('');
     const navigate = useNavigate();
 
     const handleInputChange = (e) => {
@@ -22,6 +23,10 @@ const ProfilePage = () => {
     };
 
     const handleSave = async () => {
+        if (newPassword && newPassword !== confirmPassword) {
+            setIncorrectNewPassword("Passwords don't match");
+            return;
+        }
         try {
             const { id, ...editedUser } = editableUser;
             const {password, ...editedUserWtPwd} = editedUser;
@@ -30,7 +35,7 @@ const ProfilePage = () => {
             const requestBody = {
                 ...editedUserWtPwd,
                 currentTextPassword,
-                ...(newPassword && newPassword === confirmPassword && { newPassword }),
+                ...(newPassword && { newPassword }),
             };
 
             console.log("Data of user without id and with passwords:", requestBody);
@@ -69,16 +74,18 @@ const ProfilePage = () => {
                 credentials: 'include',
             });
 
-            if (!response.ok) {
+            if (response.ok) {
+                logout();
+                navigate('/');
+            } else {
                 const errorData = await response.json();
                 throw new Error(errorData.error || 'Failed to delete user');
             }
-            window.location.href = '/';
-            logout();
         } catch (error) {
             console.error('Error deleting user:', error);
         }
     };
+
 
     return (
         <div>
@@ -172,7 +179,7 @@ const ProfilePage = () => {
                                         {showNewPassword ? <EyeSlashIcon className="w-5 h-5"/> :
                                             <EyeIcon className="w-5 h-5"/>}
                                     </button>
-
+                                    {incorrectNewPassword && <p className='mt-2 text-red-800'>{incorrectNewPassword}</p>}
                                 </div>
                             </div>
 

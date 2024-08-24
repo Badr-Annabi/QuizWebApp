@@ -14,6 +14,7 @@ import ProfilePage from "./scenes/ProfilePage";
 import CreatedQuizzesPage from "./scenes/CreatedQuizzesPage";
 import SubmittedQuizzes from "./scenes/SubmittedQuizzes";
 import EditQuiz from "./scenes/EditQuizPage";
+import ContactPage from "./scenes/ContactPage";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -28,21 +29,21 @@ root.render(
             <Route path="/login" element={<LoginPage/>} />
             <Route path="/register" element={<RegisterPage/>} />
             <Route path="/users/profile" element={
-                <PrivateRoute accessible={false}>
+                <PrivateRoute accessible={true}>
                     <ProfilePage/>
                 </PrivateRoute>
             }/>
-            <Route path="/createdquizzes" element={
+            <Route path="/quizzes/created" element={
                 <PrivateRoute accessible={false}>
                     <CreatedQuizzesPage/>
                 </PrivateRoute>
             }/>
-            <Route path="/submittedQuizzes" element={
+            <Route path="/quizzes/submitted/" element={
                 <PrivateRoute accessible={false}>
                     <SubmittedQuizzes/>
                 </PrivateRoute>
             }/>
-            <Route path="/about" element={<About/>} />
+
             <Route path="/quizzes/:quizId/submit" element={
                 <PrivateRoute accessible={false}>
                     <QuizPage/>
@@ -59,6 +60,14 @@ root.render(
                     <EditQuiz/>
                 </PrivateRoute>
             }/>
+            <Route path={"/about"} element={
+                <PrivateRoute>
+                    <About/>
+                </PrivateRoute>}/>
+            <Route path={"/contact"} element={
+                <PrivateRoute>
+                    <ContactPage/>
+                </PrivateRoute>}/>
         </Routes>
     </Router>
   </React.StrictMode>

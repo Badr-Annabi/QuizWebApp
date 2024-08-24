@@ -18,3 +18,67 @@
 .animate-bounce-infinite {
   animation: bounceInfinite 2s infinite;
 }
+
+.floating-cubes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none; /* Ensure it doesn't interfere with user interaction */
+}
+
+.cube {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.3); /* Default color; overridden by inline style */
+  animation: float 15s infinite ease-in-out;
+  border-radius: 4px;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(calc(100vh + 100px)) rotate(360deg);
+  }
+  100% {
+    transform: translateY(-100px) rotate(720deg);
+  }
+}
+
+.floating-stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  background-color:black;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: floatStar 15s infinite ease-in-out;
+}
+
+@media (prefers-color-scheme: dark) {
+  .star {
+    background-color: white;
+  }
+}
+@keyframes floatStar {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-100vh) scale(0.8);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
