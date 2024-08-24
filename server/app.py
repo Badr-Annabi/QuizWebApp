@@ -14,7 +14,6 @@ from models.user import User
 from models.answer import Answer
 
 time = '%Y-%m-%d %H:%M:%S'
-time = '%Y-%m-%d %H:%M:%S'
 #######################################################
 #                                                     #
 #            Methods definition                       #
@@ -24,11 +23,11 @@ time = '%Y-%m-%d %H:%M:%S'
 def _get_uid():
     """This function generates an uuid"""
     return str(uuid4())
-'%Y-%m-%d %H:%M:%S'
+
 def create_app():
     app = Flask(__name__)
 
-    env = os.getenv('ENV', 'PROD')
+    env = os.getenv('ENV')
     if env == 'test':
         app.config.from_object(TestingConfig)
     else:
@@ -384,7 +383,14 @@ def get_user_result(quiz_id):
     }
     return jsonify(result_data), 200
 
-
+@app.route('/routes')
+def list_routes():
+    routes = [str(rule) for rule in app.url_map.iter_rules()]
+    return jsonify(routes)
+    
+# with app.app_context():
+#     for rule in app.url_map.iter_rules():
+#         print(f"Endpoint: {rule.endpoint}, Methods: {', '.join(rule.methods)}, URL: {rule}")
 # MAIN 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=True)
