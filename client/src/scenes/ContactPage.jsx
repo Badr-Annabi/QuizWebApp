@@ -3,7 +3,6 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import Header from "../components/Header";
 import Footer from "../components/Footer"
-import {FaGithub, FaLinkedin, FaTwitter} from "react-icons/fa";
 
 const ContactPage = () => {
     useEffect(() => {
@@ -84,22 +83,19 @@ const ContactPage = () => {
                         </ul>
 
                         {/* Social Media Icons */}
-                        <div className="flex flex-col md:flex-row space-y-8 md:space-y-0 md:space-x-12 text-center md:text-left">
-                            {/* Badr Annabi's Social Media */}
-                            <div>
-                                <h3 className="text-white font-semibold mb-2">Badr Annabi</h3>
-                                <div className="flex justify-center md:justify-start space-x-4">
-                                    <a href="https://github.com/Badr-Annabi" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                                        <FaGithub className="w-6 h-6"/>
-                                    </a>
-                                    <a href="https://www.linkedin.com/in/badr-annabi/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                                        <FaLinkedin className="w-6 h-6"/>
-                                    </a>
-                                    <a href="https://x.com/annabi_badr" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                                        <FaTwitter className="w-6 h-6"/>
-                                    </a>
-                                </div>
-                            </div>
+                        <div className="flex justify-center space-x-6 mt-6">
+                            <a href="" className="text-blue-600 dark:text-blue-400 text-2xl hover:text-blue-800 dark:hover:text-blue-600">
+                                <i className="fab fa-facebook"></i>
+                            </a>
+                            <a href="#" className="text-blue-500 dark:text-blue-300 text-2xl hover:text-blue-700 dark:hover:text-blue-500">
+                                <i className="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" className="text-pink-600 dark:text-pink-400 text-2xl hover:text-pink-800 dark:hover:text-pink-600">
+                                <i className="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" className="text-blue-700 dark:text-blue-500 text-2xl hover:text-blue-900 dark:hover:text-blue-700">
+                                <i className="fab fa-linkedin"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
