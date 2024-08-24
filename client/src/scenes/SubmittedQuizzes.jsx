@@ -24,15 +24,11 @@ const SubmittedQuizzes = () => {
                     credentials: 'include'
                 });
                 const data = await response.json();
-                console.log("Submitted Quizzes:", data);
                 setQuizzes(Array.isArray(data) ? data : []); // Ensure quizzes is an array
                 setFilteredQuizzes(Array.isArray(data) ? data : []); // Ensure filteredQuizzes is an array
-                // setQuizzes(data);
-                // setFilteredQuizzes(data);
 
                 const totalResponse = await fetch('http://127.0.0.1:5000/quizzes');
                 const totalData = await totalResponse.json();
-                console.log("Total Quizzes:", totalData);
                 setTotalQuizzes(totalData.length);
                 setSubmittedQuizzes(data.length);
                 setPercentage(Math.round((data.length / totalData.length) * 100));
@@ -123,16 +119,20 @@ const SubmittedQuizzes = () => {
                             <td className="p-4">
                                 <button
                                     onClick={() => handleRetakeQuiz(quiz.id)}
-                                    className="relative inline-flex items-center justify-start px-4 py-2 overflow-hidden font-bold rounded-full group text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl
-                                        bg-gradient-to-r from-blue-500 to-purple-500 text-white dark:from-blue-400 dark:to-purple-400 dark:text-gray-900"
+                                    className="relative inline-flex items-center justify-start px-4 py-2 overflow-hidden font-bold rounded-full group text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl bg-gradient-to-r from-blue-500 to-purple-500 text-white dark:from-blue-400 dark:to-purple-400 dark:text-gray-900"
                                 >
-                                    <span className="w-32 h-32 rotate-45 translate-x-12 -translate-y-2 absolute left-0 top-0 bg-white opacity-[3%]"></span>
-                                    <span className="absolute top-0 left-0 w-48 h-48 -mt-1 transition-all duration-500 ease-in-out rotate-45 -translate-x-56 -translate-y-24 bg-white opacity-100 group-hover:-translate-x-8"></span>
-                                    <span className="relative w-full text-left transition-colors duration-200 ease-in-out group-hover:text-gray-900 dark:group-hover:text-white">
-                                            Retake Quiz
-                                        </span>
-                                    <span className="absolute inset-0 border-2 border-white rounded-full"></span>
+                                    <span
+                                        className="w-32 h-32 rotate-45 translate-x-12 -translate-y-2 absolute left-0 top-0 bg-white opacity-[3%] dark:bg-gray-800 dark:opacity-[7%]"></span>
+                                    <span
+                                        className="absolute top-0 left-0 w-48 h-48 -mt-1 transition-all duration-500 ease-in-out rotate-45 -translate-x-56 -translate-y-24 bg-white opacity-100 group-hover:-translate-x-8 dark:bg-gray-800 dark:opacity-50"></span>
+                                    <span
+                                        className="relative w-full text-left transition-colors duration-200 ease-in-out group-hover:text-gray-900 dark:group-hover:text-gray-100">
+                                        Retake Quiz
+                                    </span>
+                                    <span
+                                        className="absolute inset-0 border-2 border-white rounded-full dark:border-gray-600"></span>
                                 </button>
+
                             </td>
                         </tr>
                     ))}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaBars, FaTimes, FaUserCircle } from "react-icons/fa";
 import { useAuth } from "./PrivateRoute";
 
@@ -8,7 +8,6 @@ const Navbar = () => {
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    const location = useLocation();
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -39,29 +38,7 @@ const Navbar = () => {
         }
     };
 
-    const handleStartQuizClick = () => {
-        if (location.pathname === "/") {
-            const element = document.getElementById("Allquizes");
-            if (element) {
-                console.log('Scrolling to Allquizes section');
-                element.scrollIntoView({ behavior: "smooth" });
-            } else {
-                console.error('Element with id "Allquizes" not found');
-            }
-        } else {
-            navigate("/", { replace: true });
 
-            setTimeout(() => {
-                const element = document.getElementById("Allquizes");
-                if (element) {
-                    console.log('Scrolling to Allquizes section after navigation');
-                    element.scrollIntoView({ behavior: "smooth" });
-                } else {
-                    console.error('Element with id "Allquizes" not found after navigation');
-                }
-            }, 300); // Increased delay to ensure the element is rendered
-        }
-    };
 
     const handleProfileClick = () => {
         if (user && user.id) {
@@ -86,7 +63,6 @@ const Navbar = () => {
                         <Link to="/" className="text-xl font-bold text-gray-900 dark:text-gray-100">Home</Link>
                     </div>
                     <div className="hidden md:flex md:items-center md:space-x-10 text-lg">
-                        <Link onClick={handleStartQuizClick} className="hover:text-blue-600 dark:hover:text-blue-400">Start Now</Link>
                         <Link to="/createquiz" className="hover:text-blue-600 dark:hover:text-blue-400">Build Quiz</Link>
                         <Link to="/about" className="hover:text-blue-600 dark:hover:text-blue-400">About</Link>
                         <a href="/contact" className="hover:text-blue-600 dark:hover:text-blue-400">Contact</a>
@@ -161,12 +137,7 @@ const Navbar = () => {
             {isOpen && (
                 <div className="md:hidden transition-transform duration-300 ease-in-out transform bg-white dark:bg-gray-800">
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                        <Link
-                            to="/quizz"
-                            className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
-                        >
-                            Start Now
-                        </Link>
+
                         <Link
                             to="/createquiz"
                             className="block px-3 py-2 rounded-md text-base font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
@@ -192,6 +163,18 @@ const Navbar = () => {
                                     className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
                                 >
                                     Profile
+                                </button>
+                                <button
+                                    onClick={handleQuizzesClick}
+                                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
+                                >
+                                    My Quizzes
+                                </button>
+                                <button
+                                    onClick={handleSubmittedQuizzesClick}
+                                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400"
+                                >
+                                    Submitted Quizzes
                                 </button>
                                 <button
                                     onClick={handleLogout}
@@ -224,3 +207,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

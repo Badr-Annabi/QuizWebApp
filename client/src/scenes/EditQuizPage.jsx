@@ -11,8 +11,8 @@ const EditQuiz = () => {
     const [level, setLevel] = useState('easy'); // Default level is 'easy'
     const navigate = useNavigate();
 
+
     useEffect(() => {
-        // Fetch quiz data based on quizId
         const fetchQuiz = async () => {
             try {
                 const response = await fetch(`http://127.0.0.1:5000/quizzes/${quizId}`, {
@@ -37,13 +37,16 @@ const EditQuiz = () => {
         fetchQuiz();
     }, [quizId]);
 
+
     const handleAddQuestion = () => {
         setQuestions([...questions, { text: '', answers: [] }]);
     };
 
+
     const handleRemoveQuestion = (index) => {
         setQuestions(questions.filter((_, i) => i !== index));
     };
+
 
     const handleQuestionChange = (index, e) => {
         const { name, value } = e.target;
@@ -53,18 +56,13 @@ const EditQuiz = () => {
         setQuestions(updatedQuestions);
     };
 
-    // const handleAddAnswer = (index) => {
-    //     const updatedQuestions = questions.map((q, i) =>
-    //         i === index ? { ...q, answers: [...q.answers, ''] } : q
-    //     );
-    //     setQuestions(updatedQuestions);
-    // };
 
     const handleAddAnswer = (qIndex) => {
         const newQuestions = [...questions];
         newQuestions[qIndex].answers.push({ text: '', isCorrect: false });
         setQuestions(newQuestions);
     };
+
 
     const handleCorrectAnswerChange = (qIndex, aIndex) => {
         const newQuestions = [...questions];
@@ -81,11 +79,6 @@ const EditQuiz = () => {
         );
         setQuestions(updatedQuestions);
     };
-    // const removeAnswer = (qIndex, aIndex) => {
-    //     const newQuestions = [...questions];
-    //     newQuestions[qIndex].answers.splice(aIndex, 1);
-    //     setQuestions(newQuestions);
-    // };
 
 
     const handleAnswerChange = (qIndex, aIndex, e) => {

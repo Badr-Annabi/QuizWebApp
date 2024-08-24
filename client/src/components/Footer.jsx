@@ -6,9 +6,9 @@ const Footer = () => {
     return (
         <footer className="bg-gray-800 text-gray-200 py-8">
             <div className="container mx-auto px-4">
-                <div className="flex flex-col md:flex-row md:justify-between items-center">
+                <div className="flex flex-col md:flex-row md:justify-between items-center space-y-8 md:space-y-0">
                     {/* Logo & Description */}
-                    <div className="text-center md:text-left mb-6 md:mb-0">
+                    <div className="text-center md:text-left md:w-1/2">
                         <h1 className="text-2xl font-bold mb-2 text-white">QuizMaster</h1>
                         <p className="text-gray-400">
                             QuizMaster is your go-to platform for challenging and fun quizzes. Test your knowledge and track your progress with ease!
@@ -16,25 +16,53 @@ const Footer = () => {
                     </div>
 
                     {/* Links */}
-                    <div className="flex flex-col md:flex-row md:space-x-8 mb-6 md:mb-0">
-                        <Link to="/" className="text-gray-300 hover:text-white mb-2 md:mb-0">Home</Link>
-                        <Link to="/about" className="text-gray-300 hover:text-white mb-2 md:mb-0">About</Link>
-                        <Link to="/createquiz" className="text-gray-300 hover:text-white mb-2 md:mb-0">Create Quiz</Link>
-                        <Link to="/quizzes/created" className="text-gray-300 hover:text-white mb-2 md:mb-0">Created Quizzes</Link>
-                        <Link to="/quizzes/submitted" className="text-gray-300 hover:text-white">Submitted Quizzes</Link>
+                    <div className="flex flex-col items-center md:items-start space-y-8">
+                        {/* Title */}
+                        <h2 className="text-2xl font-bold text-gray-300 mb-4">Quick Links</h2>
+
+                        {/* Links */}
+                        <div className="flex flex-col space-y-2">
+                            <Link to="/" className="text-gray-300 hover:text-white">Home</Link>
+                            <Link to="/about" className="text-gray-300 hover:text-white">About</Link>
+                            <Link to="/createquiz" className="text-gray-300 hover:text-white">Create Quiz</Link>
+                            <Link to="/quizzes/created" className="text-gray-300 hover:text-white">Created Quizzes</Link>
+                            <Link to="/quizzes/submitted" className="text-gray-300 hover:text-white">Submitted Quizzes</Link>
+                        </div>
                     </div>
 
                     {/* Social Media Icons */}
-                    <div className="flex space-x-6">
-                        <a href="https://github.com/your-username" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                            <FaGithub className="w-6 h-6" />
-                        </a>
-                        <a href="https://linkedin.com/in/your-profile" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                            <FaLinkedin className="w-6 h-6" />
-                        </a>
-                        <a href="https://twitter.com/your-profile" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                            <FaTwitter className="w-6 h-6" />
-                        </a>
+                    <div className="flex flex-col md:flex-row space-y-8 md:space-y-0 md:space-x-12 text-center md:text-left">
+                        {/* Badr Annabi's Social Media */}
+                        <div>
+                            <h3 className="text-white font-semibold mb-2">Badr Annabi</h3>
+                            <div className="flex justify-center md:justify-start space-x-4">
+                                <a href="https://github.com/Badr-Annabi" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+                                    <FaGithub className="w-6 h-6"/>
+                                </a>
+                                <a href="https://www.linkedin.com/in/badr-annabi/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+                                    <FaLinkedin className="w-6 h-6"/>
+                                </a>
+                                <a href="https://x.com/annabi_badr" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+                                    <FaTwitter className="w-6 h-6"/>
+                                </a>
+                            </div>
+                        </div>
+
+                        {/* Oumaima Naanaa's Social Media */}
+                        <div>
+                            <h3 className="text-white font-semibold mb-2">Oumaima Naanaa</h3>
+                            <div className="flex justify-center md:justify-start space-x-4">
+                                <a href="https://github.com/naanaa59" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+                                    <FaGithub className="w-6 h-6"/>
+                                </a>
+                                <a href="https://www.linkedin.com/in/oumaima-naanaa/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+                                    <FaLinkedin className="w-6 h-6"/>
+                                </a>
+                                <a href="https://x.com/naanaa_oumaima" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+                                    <FaTwitter className="w-6 h-6"/>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

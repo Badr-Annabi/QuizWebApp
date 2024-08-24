@@ -38,12 +38,11 @@ const LoginPage = () => {
 
             if (response.ok) {
                 console.log('Login successful:', result);
-                // Redirect to the page the user was trying to access
                 const from = location.state?.from?.pathname || '/';
                 navigate(from, { replace: true });
             } else if (response.status === 401) {
                 console.error('Login failed:', result.error);
-                    setLoginMessage('User doesn\'t exist!');
+                setLoginMessage('User doesn\'t exist!');
                 }
         } catch (error) {
             console.error('An error occurred during login:', error);

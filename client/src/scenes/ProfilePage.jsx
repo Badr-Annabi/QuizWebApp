@@ -49,14 +49,9 @@ const ProfilePage = () => {
             });
 
             if (response.status === 401) {
-                // const errorData = await response.json();
-                // throw new Error(errorData.error || 'Failed to update user information');
                 setIncorrectPassword('Incorrect password');
             } else {
-
-                const data = await response.json();
                 alert('User information updated successfully');
-                console.log('Updated user:', data);
                 setIncorrectPassword('');
                 window.location.href = '/';
             }
@@ -151,7 +146,7 @@ const ProfilePage = () => {
                                     <button
                                         type="button"
                                         onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                                        className="absolute right-2 top-2"
+                                        className="absolute right-2 top-5"
                                     >
                                         {showCurrentPassword ? <EyeSlashIcon className="w-5 h-5"/> :
                                             <EyeIcon className="w-5 h-5"/>}
@@ -174,7 +169,7 @@ const ProfilePage = () => {
                                     <button
                                         type="button"
                                         onClick={() => setShowNewPassword(!showNewPassword)}
-                                        className="absolute right-2 top-2"
+                                        className="absolute right-2 top-5"
                                     >
                                         {showNewPassword ? <EyeSlashIcon className="w-5 h-5"/> :
                                             <EyeIcon className="w-5 h-5"/>}
@@ -197,7 +192,7 @@ const ProfilePage = () => {
                                     <button
                                         type="button"
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                        className="absolute right-2 top-2"
+                                        className="absolute right-2 top-5"
                                     >
                                         {showConfirmPassword ? <EyeSlashIcon className="w-5 h-5"/> :
                                             <EyeIcon className="w-5 h-5"/>}

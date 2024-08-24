@@ -5,7 +5,7 @@ import Header from "../components/Header";
 
 const QuizPage = () => {
     const { quizId } = useParams();
-    const { questionId } = useParams();
+
     const navigate = useNavigate();
     const [quiz, setQuiz] = useState(null);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -41,10 +41,6 @@ const QuizPage = () => {
 
         const updatedAnswers = [...answers];
         const questionId = quiz.questions[currentQuestionIndex].question_id;
-        console.log("Quiz:", quiz);
-        console.log("index:", currentQuestionIndex);
-
-        console.log("QuestionID:",questionId);
         const existingAnswerIndex = updatedAnswers.findIndex(
             (answer) => answer.questionId === questionId
         );
@@ -79,7 +75,7 @@ const QuizPage = () => {
                 });
 
                 if (response.ok) {
-                    const data = await response.json();
+
                     alert('Quiz completed!');
                     navigate(`/quizzes/${quizId}/result`);
                 } else {
@@ -114,11 +110,6 @@ const QuizPage = () => {
             setSelectedOption(
                 answers.find((ans) => ans.questionId === quiz.questions[currentQuestionIndex + 1]?.id)?.selectedOption || null
             );
-            // const nextQuestion = quiz.questions[currentQuestionIndex + 1];
-            // console.log(nextQuestion);
-            // const nextQuestionId = nextQuestion.question_id;
-
-            // Navigate to the URL for the next question
             navigate(`/quizzes/${quizId}/submit`);
 
         }

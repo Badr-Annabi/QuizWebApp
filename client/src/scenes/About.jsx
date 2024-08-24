@@ -1,7 +1,7 @@
 import React from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { FaGithub, FaLinkedin } from 'react-icons/fa';
+import {FaGithub, FaLinkedin, FaTwitter} from 'react-icons/fa';
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Oumaima from "../images/oumaima.png";
@@ -61,27 +61,41 @@ const About = () => {
                             <h3 className="text-xl font-semibold mb-2 text-gray-200">Badr Annabi</h3>
                             <p className="text-gray-300">Backend Software Engineer</p>
                             <div className="mt-4 flex justify-center space-x-4">
-                                <a href="https://github.com/badr-annabi" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-100">
-                                    <FaGithub className="w-6 h-6" />
+                                <a href="https://github.com/Badr-Annabi" target="_blank" rel="noopener noreferrer"
+                                   className="text-gray-400 hover:text-gray-100">
+                                    <FaGithub className="w-6 h-6"/>
                                 </a>
-                                <a href="https://linkedin.com/in/badr-annabi" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-100">
-                                    <FaLinkedin className="w-6 h-6" />
+                                <a href="https://www.linkedin.com/in/badr-annabi/" target="_blank"
+                                   rel="noopener noreferrer" className="text-gray-400 hover:text-gray-100">
+                                    <FaLinkedin className="w-6 h-6"/>
+                                </a>
+                                <a href="https://x.com/annabi_badr" target="_blank" rel="noopener noreferrer"
+                                   className="text-gray-400 hover:text-gray-100">
+                                    <FaTwitter className="w-6 h-6"/>
                                 </a>
                             </div>
                         </div>
 
                         {/* Team Member 2 */}
-                        <div className="bg-gray-800 dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-xs text-center relative overflow-hidden group" data-aos="flip-right">
-                            <div className="absolute inset-0 bg-gray-900 opacity-75 group-hover:opacity-0 transition-opacity duration-300"></div>
+                        <div
+                            className="bg-gray-800 dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-xs text-center relative overflow-hidden group"
+                            data-aos="flip-right">
+                        <div className="absolute inset-0 bg-gray-900 opacity-75 group-hover:opacity-0 transition-opacity duration-300"></div>
                             <img src={Oumaima} alt="Team Member 2" className="w-24 h-24 rounded-full mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" />
                             <h3 className="text-xl font-semibold mb-2 text-gray-200">Oumaima Naanaa</h3>
                             <p className="text-gray-300">Backend Software Engineer</p>
                             <div className="mt-4 flex justify-center space-x-4">
-                                <a href="https://github.com/oumaima-naanaa" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-100">
-                                    <FaGithub className="w-6 h-6" />
+                                <a href="https://github.com/naanaa59" target="_blank" rel="noopener noreferrer"
+                                   className="text-gray-400 hover:text-gray-100">
+                                    <FaGithub className="w-6 h-6"/>
                                 </a>
-                                <a href="https://linkedin.com/in/oumaima-naanaa" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-100">
-                                    <FaLinkedin className="w-6 h-6" />
+                                <a href="https://www.linkedin.com/in/oumaima-naanaa/" target="_blank"
+                                   rel="noopener noreferrer" className="text-gray-400 hover:text-gray-100">
+                                    <FaLinkedin className="w-6 h-6"/>
+                                </a>
+                                <a href="https://x.com/naanaa_oumaima" target="_blank" rel="noopener noreferrer"
+                                   className="text-gray-400 hover:text-gray-100">
+                                    <FaTwitter className="w-6 h-6"/>
                                 </a>
                             </div>
                         </div>
