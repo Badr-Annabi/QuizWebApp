@@ -4,7 +4,14 @@ import { useContext, createContext } from 'react';
 import request from './requests';
 
 const AuthContext = createContext();
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error("useAuth must be used within an AuthProvider");
+    }
+    return context;
+};
+
 
 const PrivateRoute = ({ children, accessible=true }) => {
     const [isAuthenticated, setIsAuthenticated] = useState();
@@ -13,6 +20,7 @@ const PrivateRoute = ({ children, accessible=true }) => {
 
     const logout = () => {
         setUser(null);
+        setIsAuthenticated(false);
     }
 
     useEffect(() => {

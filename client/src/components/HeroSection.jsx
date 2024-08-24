@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
 import '../styles/index.css'; // Ensure this file contains the animation CSS
 import { useNavigate } from "react-router-dom";
+import Popover from "./Popover"
+import {useAuth} from "./PrivateRoute";
 
 const HeroSection = () => {
+    const { user } = useAuth()
     const navigate = useNavigate();
     const [isHovered, setIsHovered] = useState(false);
+    const [showPopover, setShowPopover] = useState(false);
+
+    const percentage = 75;
 
     const handleStartQuizClick = () => {
         const element = document.getElementById("Allquizes");
@@ -18,9 +24,38 @@ const HeroSection = () => {
     }
 
     return (
-        <section className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
+        <section className="relative flex flex-col justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 overflow-hidden">
+            {showPopover && <Popover user={user}  onClose={() => setShowPopover(false)} />}
+
+            {/* Toggle Popover Button */}
+            <button
+                className="absolute top-16 left-1/2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-2 px-4 rounded-full shadow-lg"
+                style={{ zIndex: 10 }}
+                onClick={() => setShowPopover(!showPopover)}
+            >
+                User Info
+            </button>
+            {/* Animated Stars */}
+            <div className="floating-stars">
+                {[...Array(50)].map((_, index) => (
+                    <div
+                        key={index}
+                        className="star"
+                        style={{
+                            width: `${Math.random() * 5 + 2}px`,
+                            height: `${Math.random() * 5 + 2}px`,
+                            top: `${Math.random() * 100}vh`,
+                            left: `${Math.random() * 100}vw`,
+                            animationDuration: `${Math.random() * 10 + 5}s`,
+                            animationDelay: `${Math.random() * 10}s`,
+                            filter: `blur(${Math.random() * 2}px)`,
+                        }}
+                    ></div>
+                ))}
+            </div>
+
             <div
-                className={`bg-gray-50 dark:bg-gray-800 dark:text-gray-200 text-black p-8 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 max-w-3xl w-full mx-4  ${isHovered ? '' : 'animate-bounce-infinite'}`}
+                className={`bg-gray-50 dark:bg-gray-800 dark:text-gray-200 text-black p-8 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 max-w-3xl w-full mx-4 ${isHovered ? '' : 'animate-bounce-infinite'}`}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >

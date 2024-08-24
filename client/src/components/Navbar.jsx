@@ -28,8 +28,8 @@ const Navbar = () => {
             });
 
             if (response.ok) {
-                window.location.href = '/';  // Redirect to login page after logout
-                logout();  // Clear user state using the logout function from the context
+                window.location.href = '/';
+                logout();
             } else {
                 console.error('Logout failed');
             }
@@ -37,6 +37,13 @@ const Navbar = () => {
             console.error('An error occurred during logout', error);
         }
     };
+
+    const handleStartQuizClick = () => {
+        const element = document.getElementById("Allquizes");
+        if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+        }
+    }
 
     const handleProfileClick = () => {
         if (user && user.id) {
@@ -46,11 +53,11 @@ const Navbar = () => {
     };
 
     const handleQuizzesClick = () => {
-        navigate('/createdquizzes');
+        navigate('/quizzes/created');
     };
 
     const handleSubmittedQuizzesClick = () => {
-        navigate('/submittedQuizzes');
+        navigate('/quizzes/submitted');
     };
 
     return (
@@ -61,10 +68,10 @@ const Navbar = () => {
                         <Link to="/" className="text-xl font-bold text-gray-900 dark:text-gray-100">Home</Link>
                     </div>
                     <div className="hidden md:flex md:items-center md:space-x-10 text-lg">
-                        <Link to="/quizz" className="hover:text-blue-600 dark:hover:text-blue-400">Start Now</Link>
+                        <Link onClick={handleStartQuizClick} className="hover:text-blue-600 dark:hover:text-blue-400">Start Now</Link>
                         <Link to="/createquiz" className="hover:text-blue-600 dark:hover:text-blue-400">Build Quiz</Link>
                         <Link to="/about" className="hover:text-blue-600 dark:hover:text-blue-400">About</Link>
-                        <a href="#contact" className="hover:text-blue-600 dark:hover:text-blue-400">Contact</a>
+                        <a href="/contact" className="hover:text-blue-600 dark:hover:text-blue-400">Contact</a>
                         {user ? (
                             <div className="relative">
                                 <button
