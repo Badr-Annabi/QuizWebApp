@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaBars, FaTimes, FaUserCircle } from "react-icons/fa";
 import { useAuth } from "./PrivateRoute";
 
@@ -8,6 +8,7 @@ const Navbar = () => {
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
@@ -39,11 +40,28 @@ const Navbar = () => {
     };
 
     const handleStartQuizClick = () => {
-        const element = document.getElementById("Allquizes");
-        if (element) {
-            element.scrollIntoView({ behavior: "smooth" });
+        if (location.pathname === "/") {
+            const element = document.getElementById("Allquizes");
+            if (element) {
+                console.log('Scrolling to Allquizes section');
+                element.scrollIntoView({ behavior: "smooth" });
+            } else {
+                console.error('Element with id "Allquizes" not found');
+            }
+        } else {
+            navigate("/", { replace: true });
+
+            setTimeout(() => {
+                const element = document.getElementById("Allquizes");
+                if (element) {
+                    console.log('Scrolling to Allquizes section after navigation');
+                    element.scrollIntoView({ behavior: "smooth" });
+                } else {
+                    console.error('Element with id "Allquizes" not found after navigation');
+                }
+            }, 300); // Increased delay to ensure the element is rendered
         }
-    }
+    };
 
     const handleProfileClick = () => {
         if (user && user.id) {

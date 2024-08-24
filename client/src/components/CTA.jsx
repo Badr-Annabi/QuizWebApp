@@ -2,9 +2,14 @@ import React from 'react';
 import '../styles/index.css'; // Ensure this CSS file is created
 
 const CallToAction = () => {
+    const handleClick = () => {
+        const element = document.getElementById("Allquizes");
+        if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+        }
+    }
     return (
         <section className="relative py-12 bg-blue-500 text-white overflow-hidden">
-            {/* Floating Cubes */}
             <div className="floating-cubes">
                 {[...Array(30)].map((_, index) => (
                     <div
@@ -25,7 +30,9 @@ const CallToAction = () => {
             <div className="container mx-auto p-8 text-center relative z-10">
                 <h2 className="text-4xl font-extrabold mb-4 text-shadow-lg">Ready to Get Started?</h2>
                 <p className="text-lg mb-6">Join us today and start exploring a world of quizzes and challenges!</p>
-                <button className="bg-green-500 py-3 px-6 rounded-full shadow-lg hover:bg-green-600 transition-transform transform hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-green-300">
+                <button
+                    onClick={handleClick}
+                    className="bg-green-500 py-3 px-6 rounded-full shadow-lg hover:bg-green-600 transition-transform transform hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-green-300">
                     Get Started
                 </button>
             </div>

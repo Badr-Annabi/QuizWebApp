@@ -4,6 +4,8 @@ import 'aos/dist/aos.css';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Oumaima from "../images/oumaima.png";
+import Badr from "../images/Badr.png"
 
 const About = () => {
     React.useEffect(() => {
@@ -55,7 +57,7 @@ const About = () => {
                         {/* Team Member 1 */}
                         <div className="bg-gray-800 dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-xs text-center relative overflow-hidden group" data-aos="flip-left">
                             <div className="absolute inset-0 bg-gray-900 opacity-75 group-hover:opacity-0 transition-opacity duration-300"></div>
-                            <img src="/path/to/member1.jpg" alt="Team Member 1" className="w-24 h-24 rounded-full mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" />
+                            <img src={Badr} alt="Team Member 1" className="w-24 h-24 rounded-full mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" />
                             <h3 className="text-xl font-semibold mb-2 text-gray-200">Badr Annabi</h3>
                             <p className="text-gray-300">Backend Software Engineer</p>
                             <div className="mt-4 flex justify-center space-x-4">
@@ -71,7 +73,7 @@ const About = () => {
                         {/* Team Member 2 */}
                         <div className="bg-gray-800 dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-xs text-center relative overflow-hidden group" data-aos="flip-right">
                             <div className="absolute inset-0 bg-gray-900 opacity-75 group-hover:opacity-0 transition-opacity duration-300"></div>
-                            <img src="/path/to/member2.jpg" alt="Team Member 2" className="w-24 h-24 rounded-full mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" />
+                            <img src={Oumaima} alt="Team Member 2" className="w-24 h-24 rounded-full mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" />
                             <h3 className="text-xl font-semibold mb-2 text-gray-200">Oumaima Naanaa</h3>
                             <p className="text-gray-300">Backend Software Engineer</p>
                             <div className="mt-4 flex justify-center space-x-4">
