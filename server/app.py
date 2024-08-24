@@ -103,10 +103,8 @@ def login():
     if not user or not user.check_password(password):
         return jsonify({'error': 'Invalid credentials'}), 401
     session_id = _get_uid()
-    # print("session_id: {}: #### user_id:{} ".format(session_id, user.id))
     sessions.set(session_id, str(user.id))
     session['session_id'] = session_id
-    # print(f"User ID set in session: {session.get('session_id')}")
     return jsonify({'message': 'Login successful'}), 200
 
 @app.route('/logout', methods=['POST'])
@@ -144,15 +142,12 @@ def create_quiz():
 
     data = request.get_json()
     data['creator_id'] = user.id
-    # print(f"data:{data}")
     creator = User.get(user.id)
     
     if not creator:
         return jsonify({'error': 'Creator not found'}), 404
 
     new_quiz = Quiz.create(**data)
-
-    # print(new_quiz.to_dict())
     return jsonify({'message': 'Quiz created successfully'}), 201
 
 @app.route('/quizzes', methods=['GET'])
@@ -171,7 +166,6 @@ def get_created_quizzes_by_user():
 
     user = get_user_by_session()
     if not user:
-        # print(f"User ID not found for session ID: {session_id}")
         abort(403, description='Invalid session. User not found for the session ID.')
     
     quizzes_data = Quiz.query.options(joinedload(Quiz.questions).
@@ -204,10 +198,6 @@ def get_submitted_quizzes_by_user():
         joinedload(Quiz.questions).joinedload(Question.answers)
     ).filter(Quiz.id.in_(quiz_ids)).all()
 
-    # Convert quizzes to a dictionary format
-    # quizzes = [quiz.to_dict() for quiz in quizzes_data]
-    # quizzes = [quiz.to_dict() for quiz in quizzes_data]
-
     result = []
     for quiz in quizzes_data:
         relevant_submissions = [uq for uq in submitted_quizzes_data if uq.quiz_id == quiz.id]
@@ -219,21 +209,6 @@ def get_submitted_quizzes_by_user():
             result.append(quiz_data)
 
     return jsonify(result)
-
-    # return jsonify(quizzes)
-    result = []
-    for quiz in quizzes_data:
-        relevant_submissions = [uq for uq in submitted_quizzes_data if uq.quiz_id == quiz.id]
-        if relevant_submissions:
-            user_quiz = max(relevant_submissions, key=lambda uq: uq.date_taken)
-            quiz_data = quiz.to_dict()
-            quiz_data['raw_score'] = user_quiz.raw_score
-            quiz_data['date_taken'] = user_quiz.date_taken.strftime(time)
-            result.append(quiz_data)
-
-    return jsonify(result)
-
-    # return jsonify(quizzes)
 
 
 @app.route('/quizzes/<quiz_id>', methods=['GET'])
@@ -241,7 +216,6 @@ def get_quiz(quiz_id):
 
     user = get_user_by_session()
         
-    # print(quiz_id)
     quiz = Quiz.get(quiz_id)
     if not quiz:
         return jsonify({'error': 'Quiz not found'}), 404
@@ -279,11 +253,10 @@ def submit_quiz(quiz_id):
     quiz = Quiz.get(quiz_id)
     if not quiz:
         return jsonify({'error': 'Quiz not found'}), 404
-    # questions = quiz.questions
 
     for answer in answers:
         user_answer = answer.get('selectedOption')
-        # print(answer)
+
         print(answer.get('questionId'))
         question = Question.get(answer.get('questionId'))
         print(question)
@@ -316,8 +289,6 @@ def update_quiz(quiz_id):
 
     # Verify that the user can only update their own quiz
     quiz_gotten = Quiz.get(quiz_id)
-    # print(f'user id {user.id}')
-    # print(f'quiz creator id {quiz_gotten.creator_id}')
     if user.id != quiz_gotten.creator_id:
         abort(403, description="You are not authorized to update this quiz.")
     
@@ -340,8 +311,6 @@ def delete_quiz(quiz_id):
     quiz = Quiz.delete(quiz_id)
 
     return jsonify({'message': 'Quiz deleted successfully'}), 200
-
-
 
 #######################################################
 #                                                     #
@@ -366,10 +335,7 @@ def update_user():
                 user.password = value
         
     updated_user = User.update(user.id, **data)
-
-    # print(f'Updated Users password: {updated_user.password}')
-
-
+    
     return jsonify({"message": "User updated successfully", "user": user.to_dict()})
 
 @app.route('/users/profile', methods=['DELETE'])

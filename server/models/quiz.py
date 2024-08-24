@@ -21,7 +21,6 @@ class Quiz(BaseModel):
         if instance and 'questions' in kwargs:
             questions_data = kwargs['questions']
             for q_data in questions_data:
-                # print(q_data)
                 Question.create(quiz_id=instance.id, **q_data)
         
         instance.save()
@@ -44,7 +43,6 @@ class Quiz(BaseModel):
                 instance.questions.append(question)
 
                 answers_data = q_data['answers']
-                # correct_answer = q_data['isCorrect']
 
                 for a_data in answers_data:
                     answer = Answer(
