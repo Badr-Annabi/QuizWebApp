@@ -1,8 +1,7 @@
-
 import React from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import {FaGithub, FaLinkedin, FaTwitter} from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Oumaima from "../images/oumaima.png";
@@ -16,9 +15,9 @@ const About = () => {
     return (
         <div>
             <Header/>
-            <section className="min-h-screen bg-gray-100 dark:bg-gray-900">
+            <section className="min-h-screen  bg-gray-100 dark:bg-gray-900">
                 {/* Hero Section */}
-                <div className="relative overflow-hidden bg-cover bg-center h-80" style={{ backgroundImage: 'url(/path/to/your/background-image.jpg)' }}>
+                <div className="relative overflow-hidden bg-cover bg-center h-80">
                     <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                         <div className="text-center text-white p-8">
                             <h1 className="text-5xl font-extrabold mb-4" data-aos="fade-up">About QuizMaster</h1>
@@ -56,46 +55,41 @@ const About = () => {
                         </h2>
                         <div className="flex flex-wrap justify-center gap-8">
                             {/* Team Member 1 */}
-                            <div className="bg-gray-800 dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-xs text-center relative overflow-hidden group" data-aos="flip-left">
-                                <div className="absolute inset-0 bg-gray-900 opacity-75 group-hover:opacity-0 transition-opacity duration-300"></div>
-                                <img src={Badr} alt="Team Member 1" className="w-24 h-24 rounded-full mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" />
-                                <h3 className="text-xl font-semibold mb-2 text-gray-200">Badr Annabi</h3>
-                                <p className="text-gray-300">Backend Software Engineer</p>
+                            <div className="border-2 dark:border-white  p-6 rounded-lg shadow-lg max-w-xs text-center relative overflow-hidden group transform transition-transform duration-300 hover:scale-105 hover:shadow-lg" data-aos="flip-left">
+                                <div className=" inset-0 bg-gray-900 opacity-50 group-hover:opacity-30 transition-opacity duration-300"></div>
+                                <img src={Badr} alt="Badr Annabi" className="w-24 h-24 rounded-full mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" />
+                                <h3 className="text-xl font-semibold mb-2 text-black dark:text-white">Badr Annabi</h3>
+                                <p className="text-black dark:text-gray-300">Backend Software Engineer</p>
                                 <div className="mt-4 flex justify-center space-x-4">
-                                    <a href="https://github.com/Badr-Annabi" target="_blank" rel="noopener noreferrer"
-                                       className="text-gray-400 hover:text-gray-100">
+                                    <a href="https://github.com/Badr-Annabi" target="_blank" rel="noopener noreferrer" className="text-gray-900 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-white">
                                         <FaGithub className="w-6 h-6"/>
                                     </a>
-                                    <a href="https://www.linkedin.com/in/badr-annabi/" target="_blank"
-                                       rel="noopener noreferrer" className="text-gray-400 hover:text-gray-100">
+                                    <a href="https://www.linkedin.com/in/badr-annabi/" target="_blank" rel="noopener noreferrer" className="text-gray-900 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-white">
                                         <FaLinkedin className="w-6 h-6"/>
                                     </a>
-                                    <a href="https://x.com/annabi_badr" target="_blank" rel="noopener noreferrer"
-                                       className="text-gray-400 hover:text-gray-100">
+                                    <a href="https://x.com/annabi_badr" target="_blank" rel="noopener noreferrer" className="text-gray-900 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-white">
                                         <FaTwitter className="w-6 h-6"/>
                                     </a>
                                 </div>
                             </div>
 
                             {/* Team Member 2 */}
-                            <div
-                                className="bg-gray-800 dark:bg-gray-900 p-6 rounded-lg shadow-lg max-w-xs text-center relative overflow-hidden group"
-                                data-aos="flip-right">
-                                <div className="absolute inset-0 bg-gray-900 opacity-75 group-hover:opacity-0 transition-opacity duration-300"></div>
-                                <img src={Oumaima} alt="Team Member 2" className="w-24 h-24 rounded-full mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" />
-                                <h3 className="text-xl font-semibold mb-2 text-gray-200">Oumaima Naanaa</h3>
-                                <p className="text-gray-300">Backend Software Engineer</p>
-                                <div className="mt-4 flex justify-center space-x-4">
-                                    <a href="https://github.com/naanaa59" target="_blank" rel="noopener noreferrer"
-                                       className="text-gray-400 hover:text-gray-100">
+                            <div className="border-2 border-white  p-6 rounded-lg shadow-lg max-w-xs text-center relative overflow-hidden group transform transition-transform duration-300 hover:scale-105 hover:shadow-lg" data-aos="flip-right">
+                                <div className=" inset-0 bg-gray-900 opacity-50 group-hover:opacity-30 transition-opacity duration-300"></div>
+                                <img src={Oumaima} alt="Oumaima Naanaa" className="w-24 h-24 rounded-full mx-auto mb-4 transition-transform duration-300 group-hover:scale-110" />
+                                <h3 className="text-xl font-semibold mb-2 text-black dark:text-white">Oumaima Naanaa</h3>
+                                <p className="text-black dark:text-gray-300">Backend Software Engineer</p>
+                                <div
+                                    className="mt-4 flex justify-center space-x-4"
+                                    style={{zIndex: 10}}
+                                >
+                                    <a href="https://github.com/naanaa59" target="_blank" rel="noopener noreferrer" className="text-gray-900 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-white">
                                         <FaGithub className="w-6 h-6"/>
                                     </a>
-                                    <a href="https://www.linkedin.com/in/oumaima-naanaa/" target="_blank"
-                                       rel="noopener noreferrer" className="text-gray-400 hover:text-gray-100">
+                                    <a href="https://www.linkedin.com/in/oumaima-naanaa/" target="_blank" rel="noopener noreferrer" className="text-gray-900 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-white">
                                         <FaLinkedin className="w-6 h-6"/>
                                     </a>
-                                    <a href="https://x.com/naanaa_oumaima" target="_blank" rel="noopener noreferrer"
-                                       className="text-gray-400 hover:text-gray-100">
+                                    <a href="https://x.com/naanaa_oumaima" target="_blank" rel="noopener noreferrer" className="text-gray-900 dark:text-gray-400 hover:text-indigo-500 dark:hover:text-white">
                                         <FaTwitter className="w-6 h-6"/>
                                     </a>
                                 </div>
