@@ -5,8 +5,8 @@ import Header from '../components/Header';
 
 const CreatedQuizzesPage = () => {
     const [quizzes, setQuizzes] = useState([]);
+    // eslint-disable-next-line
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedQuiz, setSelectedQuiz] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -51,7 +51,7 @@ const CreatedQuizzesPage = () => {
             console.error('Error deleting quiz:', error);
         }
     };
-
+    // eslint-disable-next-line
     const handleSaveQuiz = async (quizId, updatedQuiz) => {
         try {
             const response = await fetch(`http://127.0.0.1:5000/quizzes/${quizId}`, {
@@ -103,98 +103,8 @@ const CreatedQuizzesPage = () => {
                     ))}
                 </div>
             </div>
-            {/*{isModalOpen && selectedQuiz && (*/}
-            {/*    <EditQuizModal*/}
-            {/*        quiz={selectedQuiz}*/}
-            {/*        onClose={() => setIsModalOpen(false)}*/}
-            {/*        onSave={handleSaveQuiz}  // Pass handleSaveQuiz as a prop to EditQuizModal*/}
-            {/*    />*/}
-            {/*)}*/}
         </div>
     );
 };
-
-// const EditQuizModal = ({ quiz, onClose, onSave }) => {
-//     const [quizData, setQuizData] = useState(quiz);
-//
-//     const handleInputChange = (e) => {
-//         const { name, value } = e.target;
-//         setQuizData({
-//             ...quizData,
-//             [name]: value,
-//         });
-//     };
-//
-//     const handleQuestionChange = (index, e) => {
-//         const updatedQuestions = quizData.questions.map((q, i) =>
-//             i === index ? { ...q, [e.target.name]: e.target.value } : q
-//         );
-//         setQuizData({
-//             ...quizData,
-//             questions: updatedQuestions,
-//         });
-//     };
-//
-//     const handleSave = async () => {
-//         await onSave(quizData.id, quizData); // Use onSave prop to save the quiz
-//     };
-//
-//     return (
-//         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-//             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-//                 <h2 className="text-2xl mb-4">Edit Quiz</h2>
-//                 <input
-//                     type="text"
-//                     name="title"
-//                     value={quizData.title}
-//                     onChange={handleInputChange}
-//                     placeholder="Quiz Title"
-//                     className="mb-4 p-2 border rounded w-full"
-//                 />
-//                 <textarea
-//                     name="description"
-//                     value={quizData.description}
-//                     onChange={handleInputChange}
-//                     placeholder="Quiz Description"
-//                     className="mb-4 p-2 border rounded w-full"
-//                 />
-//                 {quizData.questions.map((question, index) => (
-//                     <div key={index} className="mb-4">
-//                         <input
-//                             type="text"
-//                             name="question"
-//                             value={question.question}
-//                             onChange={(e) => handleQuestionChange(index, e)}
-//                             placeholder={`Question ${index + 1}`}
-//                             className="mb-2 p-2 border rounded w-full"
-//                         />
-//                         <input
-//                             type="text"
-//                             name="correct_answer"
-//                             value={question.correct_answer}
-//                             onChange={(e) => handleQuestionChange(index, e)}
-//                             placeholder="Correct Answer"
-//                             className="p-2 border rounded w-full"
-//                         />
-//                     </div>
-//                 ))}
-//                 <div className="flex justify-end">
-//                     <button
-//                         onClick={handleSave}
-//                         className="bg-indigo-500 text-white p-2 rounded mr-2 hover:bg-indigo-700"
-//                     >
-//                         Save Changes
-//                     </button>
-//                     <button
-//                         onClick={onClose}
-//                         className="bg-red-500 text-white p-2 rounded hover:bg-red-700"
-//                     >
-//                         Cancel
-//                     </button>
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// };
 
 export default CreatedQuizzesPage;

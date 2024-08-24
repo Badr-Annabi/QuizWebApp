@@ -10,7 +10,6 @@ const HeroSection = () => {
     const [isHovered, setIsHovered] = useState(false);
     const [showPopover, setShowPopover] = useState(false);
 
-    const percentage = 75;
 
     const handleStartQuizClick = () => {
         const element = document.getElementById("Allquizes");
@@ -25,16 +24,17 @@ const HeroSection = () => {
 
     return (
         <section className="relative flex flex-col justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 overflow-hidden">
-            {showPopover && <Popover user={user}  onClose={() => setShowPopover(false)} />}
+            {user && showPopover && <Popover user={user} onClose={() => setShowPopover(false)} />}
 
-            {/* Toggle Popover Button */}
-            <button
-                className="absolute top-16 left-1/2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-2 px-4 rounded-full shadow-lg"
-                style={{ zIndex: 10 }}
-                onClick={() => setShowPopover(!showPopover)}
-            >
-                User Info
-            </button>
+            {user && (
+                <button
+                    className="absolute top-16 left-1/2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-2 px-4 rounded-full shadow-lg"
+                    style={{ zIndex: 10 }}
+                    onClick={() => setShowPopover(!showPopover)}
+                >
+                    My Info
+                </button>
+            )}
             {/* Animated Stars */}
             <div className="floating-stars">
                 {[...Array(50)].map((_, index) => (

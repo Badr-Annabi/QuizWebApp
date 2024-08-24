@@ -66,6 +66,33 @@
   animation: floatStar 15s infinite ease-in-out;
 }
 
+/* Arrow Animation */
+.popover-arrow {
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent white transparent; /* Adjust for dark mode */
+  position: absolute;
+  top: 100%; /* Position below the popover */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.popover-arrow-animate {
+  animation: bounce 0.5s ease-in-out;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   .star {
     background-color: white;

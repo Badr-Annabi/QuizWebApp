@@ -5,7 +5,8 @@ import 'aos/dist/aos.css';
 import test_img from "../images/test_img.png";
 
 const AllQuizes = () => {
-    const [quizzes, setQuizesData] = useState([]);
+    const [quizzes, setQuizzesData] = useState([]);
+    const [visibleCount, setVisibleCount] = useState(4); // Initial number of visible quizzes
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -22,8 +23,7 @@ const AllQuizes = () => {
 
             if (response.ok) {
                 const quizzesData = await response.json();
-                console.log("Fetched quizzes:", quizzesData);
-                setQuizesData(quizzesData);
+                setQuizzesData(quizzesData);
             } else {
                 console.error('Failed to fetch quizzes');
             }
@@ -35,18 +35,22 @@ const AllQuizes = () => {
     const getBackgroundColor = (level) => {
         switch (level) {
             case 'easy':
-                return 'bg-gradient-to-r from-green-300 to-green-500 text-green-900';
+                return 'bg-gradient-to-r from-green-300 to-green-500 text-green-900 dark:from-green-700 dark:to-green-900 dark:text-green-100';
             case 'medium':
-                return 'bg-gradient-to-r from-yellow-300 to-yellow-500 text-yellow-900';
+                return 'bg-gradient-to-r from-yellow-300 to-yellow-500 text-yellow-900 dark:from-yellow-600 dark:to-yellow-800 dark:text-yellow-100';
             case 'hard':
-                return 'bg-gradient-to-r from-red-300 to-red-500 text-red-900';
+                return 'bg-gradient-to-r from-red-300 to-red-500 text-red-900 dark:from-red-700 dark:to-red-900 dark:text-red-100';
             default:
-                return 'bg-gradient-to-r from-gray-300 to-gray-500 text-gray-900';
+                return 'bg-gradient-to-r from-gray-300 to-gray-500 text-gray-900 dark:from-gray-700 dark:to-gray-900 dark:text-gray-100';
         }
     };
 
     const handleTakeQuiz = (quizId) => {
         navigate(`/quizzes/${quizId}/submit`);
+    };
+
+    const handleShowMore = () => {
+        setVisibleCount(prevCount => prevCount + 4);
     };
 
     return (
@@ -56,17 +60,15 @@ const AllQuizes = () => {
             </p>
             <div className='flex flex-col lg:flex-row justify-center'>
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 p-6'>
-                    {quizzes && quizzes.map((quiz, index) => (
+                    {quizzes.slice(0, visibleCount).map((quiz, index) => (
                         <div
                             key={index}
                             data-aos="fade-up"
                             data-aos-delay={`${index * 100}`} // Delay the animation based on the index
-                            className={`relative bg-gray-300 dark:bg-indigo-300 rounded-lg shadow-lg overflow-hidden transform transition duration-500 hover:scale-105 group`}
+                            className={`relative ${getBackgroundColor(quiz.level)} rounded-lg shadow-xl overflow-hidden transform transition duration-500 hover:scale-105 group border border-white/10`}
                         >
-                            {/* Image Cover */}
                             <img src={test_img} alt="Quiz Cover" className="w-full h-48 object-cover" />
 
-                            {/* Mirror Effect */}
                             <div className="absolute inset-0 bg-gradient-to-t from-transparent to-black opacity-40 group-hover:opacity-0 transition duration-500"></div>
 
                             <div className='flex flex-col p-4 relative z-10'>
@@ -75,7 +77,6 @@ const AllQuizes = () => {
                                 </p>
                                 <p className='text-gray-700 dark:text-gray-300 mb-4'>Description: {quiz.description}</p>
 
-                                {/* Level Badge */}
                                 <div className="flex justify-center mb-4">
                                     <span className={`inline-block px-4 py-1 text-sm font-semibold rounded-full ${getBackgroundColor(quiz.level)}`}>
                                         Level: {quiz.level}
@@ -95,6 +96,15 @@ const AllQuizes = () => {
                     ))}
                 </div>
             </div>
+            {quizzes.length > visibleCount && (
+                <button
+                    onClick={handleShowMore}
+                    aria-label="Show more quizzes"
+                    className="mt-6 bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-3 px-8 rounded-full shadow-lg hover:bg-black transition-transform transform hover:-translate-y-1"
+                >
+                    Show More
+                </button>
+            )}
         </div>
     );
 }
