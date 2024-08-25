@@ -29,7 +29,7 @@ yarn-error.log*
 cookies.txt
 docker-compose.yml
 docker_script.sh
-instance/
+# instance/
 server/Dockerfile
 server/cookies.json
 server/requirements.txt
