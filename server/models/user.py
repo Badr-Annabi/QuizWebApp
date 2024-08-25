@@ -34,9 +34,7 @@ class User(BaseModel):
     def __setattr__(self, name, value):
         """sets a password with md5 encryption"""
         if name == "password":
-            print(f'before hash {value}')
             value = hash_password(value)
-            print(f'after hash {value}')
         super().__setattr__(name, value)
 
     def check_password(self, password):

@@ -16,11 +16,11 @@ class AppTestCase(unittest.TestCase):
         cls.app_context.push()
         db.create_all()
 
-    # @classmethod
-    # def tearDownClass(cls):
-        # db.session.remove()
-    #     db.drop_all()
-    #     cls.app_context.pop()
+    @classmethod
+    def tearDownClass(cls):
+        db.session.remove()
+        db.drop_all()
+        cls.app_context.pop()
 
     def save_cookies(self, url, login_data, file_path):
         response = requests.post(url, json=login_data)
@@ -57,8 +57,28 @@ class AppTestCase(unittest.TestCase):
         }
         
         # Read cookies from cookies.txt
-        self.save_cookies(login_url, login_data, 'cookies.json')
-        self.cookies = self.load_cookies('cookies.json')
+        try:
+            if (self.user):
+                print(f"Attempting to login to {login_url} with email {login_data['email']}")
+                response = requests.post(login_url, json=login_data)
+                print(f"Login response status code: {response.status_code}")
+                
+                if response.status_code == 200:
+                    print("Login successful!")
+                    # Save cookies to file
+                    cookies = response.cookies
+                    print(f"Saving cookies to cookies.json")
+                    with open('cookies.json', 'w') as file:
+                        json.dump(cookies.get_dict(), file)
+                    self.cookies = cookies
+                else:
+                    print("Login failed")
+                    raise Exception("Failed to login")
+        except Exception as e:
+            print(f"An error occurred during setup: {str(e)}")
+            raise
+        
+        print("Setup completed")
 
 
 
