@@ -343,7 +343,6 @@ def delete_user():
     # Check if user is authenticated
     logged_in_user = get_user_by_session()
 
-
     # Delete the user
     User.delete(logged_in_user.id)
 

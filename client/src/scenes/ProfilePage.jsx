@@ -127,7 +127,7 @@ const ProfilePage = () => {
                                 <h2 className="text-2xl font-semibold text-gray-700 dark:text-gray-300">Bio</h2>
                                 <textarea
                                     name="bio"
-                                    value={editableUser.bio}
+                                    value={editableUser.bio || ''}
                                     onChange={handleInputChange}
                                     className="mt-2 p-2 border rounded-lg w-full"
                                 />
