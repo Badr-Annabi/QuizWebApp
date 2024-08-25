@@ -21,7 +21,9 @@ const Popover = ({ user, onClose }) => {
                     credentials: 'include'
                 });
                 const data = await response.json();
-                console.log("Submitted Quizzes:", data);
+                if (data.status === 404) {
+                    console.log("Submitted Quizzes:", data);
+                }
                 setQuizzes(Array.isArray(data) ? data : []);
                 setFilteredQuizzes(Array.isArray(data) ? data : []);
 
@@ -54,7 +56,7 @@ const Popover = ({ user, onClose }) => {
                 </div>
                 <div className="flex flex-col items-center">
                     <p className="text-sm text-gray-500 dark:text-gray-400">Total Quizzes: {totalQuizzes}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Submitted Quizzes: {submittedQuizzes}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Submitted Quizzes: {submittedQuizzes ? submittedQuizzes : 0}</p>
                 </div>
             </div>
         </div>

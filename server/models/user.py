@@ -22,7 +22,7 @@ class User(BaseModel):
     lastName = db.Column(db.String(80), nullable=False)
     bio = db.Column(db.String(1024), nullable=True)
 
-    quizzes_created = db.relationship('Quiz', backref='creator', lazy=True)
+    quizzes_created = db.relationship('Quiz', backref='creator', cascade="all, delete-orphan")
 
     quizzes_taken = db.relationship('UserQuiz', backref='user', cascade="all, delete-orphan")
 
