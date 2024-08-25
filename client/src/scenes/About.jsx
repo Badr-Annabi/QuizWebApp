@@ -21,7 +21,7 @@ const About = () => {
                     <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                         <div className="text-center text-white p-8">
                             <h1 className="text-5xl font-extrabold mb-4" data-aos="fade-up">About QuizMaster</h1>
-                            <p className="text-lg mb-8" data-aos="fade-up" data-aos-delay="200">
+                            <p className="text-lg my-8 w-1/2 mx-auto" data-aos="fade-up" data-aos-delay="200">
                                 Welcome to QuizMaster, a platform where you can challenge yourself with a diverse range of quizzes. Our mission is to make learning fun and engaging while allowing you to track your progress and compete with others.
                             </p>
                         </div>
